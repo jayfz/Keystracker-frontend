@@ -1,0 +1,18 @@
+.roundedActionButton {
+    border:none;
+    width:2rem;
+    height:2rem;
+    border-radius: 50%;
+    position: absolute;
+    top:0.5rem;
+    right:0.5rem;
+    background-color: azure;
+    border: transparent;
+    color:black;
+    transition: color 0.2s ease, border 0.2s ease;
+}
+
+.roundedActionButton:hover{
+    color:coral;
+    border: 1px solid coral;
+}

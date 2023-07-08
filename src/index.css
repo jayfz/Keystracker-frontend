@@ -2,7 +2,8 @@
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
 
 
-  color-scheme: light dark;
+  /* color-scheme: light dark; */
+  box-sizing: border-box;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -23,6 +24,12 @@ body {
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
+}
+
+ul{
+ margin: 0;
+ list-style-type: none;
+ padding: 0;
 }
 
 button {

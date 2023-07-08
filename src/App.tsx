@@ -1,8 +1,25 @@
-import { useState } from 'react'
-import './App.css'
+import "./App.css";
+import { Routes, Route } from "react-router-dom";
+import HomePage from "./pages/HomePage";
 
-function App() {
-return <>Hello World!</>;
+function Header() {
+  return <h1>Header</h1>;
 }
 
-export default App
+function Footer() {
+  return <h1>Footer</h1>;
+}
+
+function App() {
+  return (
+    <>
+      {/* <Header /> */}
+      <Routes>
+        <Route path="/" element={<HomePage />}></Route>
+      </Routes>
+      {/* <Footer /> */}
+    </>
+  );
+}
+
+export default App;
