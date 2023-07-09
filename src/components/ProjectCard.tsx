@@ -28,7 +28,10 @@ export function ProjectCard(props: ProjectCardProps) {
   return (
     <article className={styles.projectCard}>
       <section style={thumbnailStyles}>
-        <RoundedActionButton onClick={onRoundedActionButtonClick} />
+        <RoundedActionButton
+          onClick={onRoundedActionButtonClick}
+          variant="trash"
+        />
       </section>
       <section>
         <p>{project.name}</p>

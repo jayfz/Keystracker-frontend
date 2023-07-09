@@ -1,0 +1,16 @@
+.createProjectCard{
+    border: 2px solid grey;
+    width: 272px;
+    height: 168px;
+    cursor: pointer;
+    position:initial;
+    display:flex;
+    justify-content: center;
+
+    align-items: center;
+
+}
+
+.createProjectCard > button{
+    position: initial;
+}

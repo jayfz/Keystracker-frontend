@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Project } from "../models/Project";
 import { ProjectCard } from "./ProjectCard";
+import { CreateProjectCard } from "./CreateProjectCard";
 import ProjectService from "../services/ProjectService";
 import { ListProjectsContext } from "../context/ListProjectsContext";
 
@@ -29,6 +30,9 @@ export default function ListProjects() {
             <ProjectCard project={p} />
           </li>
         ))}
+        <li>
+          <CreateProjectCard />
+        </li>
       </ul>
     </ListProjectsContext.Provider>
   );

@@ -6,6 +6,7 @@ import { BrowserRouter } from "react-router-dom";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faPlus, faTrash } from "@fortawesome/free-solid-svg-icons";
 
+import "normalize.css";
 library.add(faPlus, faTrash);
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(

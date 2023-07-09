@@ -1,13 +1,15 @@
 .projectCard{
     border-radius:2rem;
     width: 272px;
+    cursor: pointer;
 }
 
 .projectCard > section:first-child{
 
+    display: flex;
+    justify-content: right;
     height: 168px;
     background: linear-gradient(0deg, rgba(242,241,252,1) 0%, rgba(0,56,107,0.3) 100%);
-    position: relative;
     border-radius: 0.5rem;
     margin-bottom: 0.5rem;
     transition: border-radius 0.2s ease;

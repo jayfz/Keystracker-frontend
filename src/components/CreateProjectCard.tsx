@@ -1,22 +1,20 @@
+import { Link } from "react-router-dom";
 import { RoundedActionButton } from "./RoundedActionButton";
+import styles from "./styles/CreateProjectCard.module.css";
 
 export function CreateProjectCard() {
-  const thumbnail = "./no-thumbnail.jpg";
-
   const onClickHandler = () => {
     //route to create Project
     console.log("routing to create project");
   };
 
   return (
-    <article onClick={onClickHandler}>
-      <section>
-        <img src={thumbnail} />
-        <RoundedActionButton />
-      </section>
-      <section>
-        <p>Add a new project...</p>
-      </section>
-    </article>
+    <Link
+      to={"create"}
+      className={styles.createProjectCard}
+      onClick={onClickHandler}
+    >
+      <RoundedActionButton variant={"plus"} />
+    </Link>
   );
 }
