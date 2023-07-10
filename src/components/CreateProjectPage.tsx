@@ -1,25 +1,92 @@
-import { FormEventHandler, useRef, useState } from "react";
+import { useState } from "react";
 import styles from "./styles/CreateProjectPage.module.css";
 import ProjectService from "../services/ProjectService";
+import {
+  CreateProjectInputSchema,
+  createProjectInput,
+} from "../models/Project";
+import { Formik, Form, Field, ErrorMessage, FormikProps } from "formik";
+import {
+  createCLIParametersInput,
+  createCLIParametersInputSchema,
+} from "../models/CLIParameters";
+import { ZodError } from "zod";
+
+function getErrorsFromZod(parsedResult: ZodError) {
+  const flattenedErrors = parsedResult.flatten().fieldErrors;
+
+  const errors: any = {};
+  for (const key in flattenedErrors) {
+    errors[key] =
+      flattenedErrors[key as keyof typeof flattenedErrors]?.join(", also ");
+  }
+
+  return errors;
+}
 
 export default function CreateProjectPage() {
   const [projectId, setProjectId] = useState<number>(0);
 
-  const inputProjectNameRef = useRef<HTMLInputElement>(null);
-  const inputProjectURLRef = useRef<HTMLInputElement>(null);
+  const createProjectInitialValues: createProjectInput = {
+    name: "",
+    url: "",
+  };
+
+  const createProjectFormProps = {
+    initialValues: createProjectInitialValues,
+    async onSubmit(values: unknown) {
+      const project = CreateProjectInputSchema.parse(values);
+      const createdProject = await ProjectService.createProject(project);
+      if (createdProject) {
+        setProjectId(createdProject.id);
+      } else {
+        //report error!
+      }
+    },
+    validate(values: createProjectInput) {
+      const parsedProjectInput = CreateProjectInputSchema.safeParse(values);
+      if (parsedProjectInput.success) return {};
+      return getErrorsFromZod(parsedProjectInput.error);
+    },
+  };
+
+  const createCLIParametersInitialValues: createCLIParametersInput = {
+    projectId,
+    inputVideoFilename: "",
+    leftHandWhiteKeyColor: "#000000",
+    leftHandBlackKeyColor: "#000000",
+    rightHandWhiteKeyColor: "#000000",
+    rightHandBlackKeyColor: "#000000",
+    firstOctaveAt: 0,
+    octavesLength: 0,
+    numberOfOctaves: 0,
+    rawFrameLinesToExtract: 0,
+    rawFrameCopyFromLine: 0,
+    trackMode: "Keys",
+    numberOfFramesToSkip: 0,
+    processFramesDivisibleBy: 1,
+    outFileName: "out.mid",
+  };
+
+  const createCLIParamtersForProjectFormProps = {
+    initialValues: createCLIParametersInitialValues,
+    async onSubmit(values: unknown) {
+      const cliParameters = CreateProjectInputSchema.parse(values);
+      const result = await ProjectService.createProject(cliParameters);
+      if (!result) {
+        //report error!
+      }
+    },
+    validate(values: createCLIParametersInput) {
+      const parsedCLIParametersInput =
+        createCLIParametersInputSchema.safeParse(values);
+      if (parsedCLIParametersInput.success) return {};
+      return getErrorsFromZod(parsedCLIParametersInput.error);
+    },
+  };
 
   const cliParametersFormEnabled = {
     display: projectId === 0 ? "none" : "inherit",
-  };
-
-  const onSubmitCreateProjectForm: FormEventHandler = (event) => {
-    event.preventDefault();
-    const project = {
-      name:
-        (inputProjectNameRef.current && inputProjectNameRef.current.value) ||
-        "",
-      url: inputProjectURLRef.current.value,
-    };
   };
 
   return (
@@ -27,74 +94,129 @@ export default function CreateProjectPage() {
       <h1>Add a new project</h1>
 
       <h2>Step 1</h2>
-      <form onSubmit={onSubmitCreateProjectForm}>
-        <label htmlFor="projectName">Name</label>
-        <input ref={inputProjectNameRef} type="text" id="projectName" />
+      <Formik {...createProjectFormProps}>
+        {(props: FormikProps<createProjectInput>) => (
+          <Form>
+            <label htmlFor="name">Name</label>
+            <Field type="text" id="name" name="name" />
+            <ErrorMessage
+              name="name"
+              component="span"
+              className={styles.validationError}
+            />
 
-        <label htmlFor="url">URL</label>
-        <input ref={inputProjectURLRef} type="url" id="url" />
+            <label htmlFor="url">URL</label>
+            <Field type="url" id="url" name="url" />
+            <ErrorMessage
+              name="url"
+              component="span"
+              className={styles.validationError}
+            />
 
-        <input type="submit" value="Continue" />
-      </form>
+            <Field type="submit" value="Continue" id="submit" />
+          </Form>
+        )}
+      </Formik>
 
       <section style={cliParametersFormEnabled}>
         <h2>Step 2</h2>
-        <form>
-          <label htmlFor="firstOctaveAt">First octave at</label>
-          <input type="number" id="firstOctaveAt" />
+        <Formik {...createCLIParamtersForProjectFormProps}>
+          {(props: FormikProps<createCLIParametersInput>) => (
+            <Form>
+              <label htmlFor="firstOctaveAt">First octave at</label>
+              <Field type="number" id="firstOctaveAt" name="firstOctaveAt" />
 
-          <label htmlFor="octavesLength">Octaves length</label>
-          <input type="number" id="octavesLength" />
+              <label htmlFor="octavesLength">Octaves length</label>
+              <Field type="number" id="octavesLength" name="octavesLength" />
 
-          <label htmlFor="numberOfOctaves">Number of octaves</label>
-          <input type="number" id="numberOfOctaves" />
+              <label htmlFor="numberOfOctaves">Number of octaves</label>
+              <Field
+                type="number"
+                id="numberOfOctaves"
+                name="numberOfOctaves"
+              />
 
-          <label htmlFor="rawFrameLinesExtract">
-            Lines to extract from raw frame
-          </label>
-          <input type="number" id="rawFrameLinesExtract" />
+              <label htmlFor="rawFrameLinesToExtract">
+                Lines to extract from raw frame
+              </label>
+              <Field
+                type="number"
+                id="rawFrameLinesToExtract"
+                name="rawFrameLinesToExtract"
+              />
 
-          <label htmlFor="rawFrameCopyFrom">
-            Start copy from raw frame line{" "}
-          </label>
-          <input type="number" id="rawFrameCopyFrom" />
+              <label htmlFor="rawFrameCopyFromLine">
+                Start copy from raw frame line
+              </label>
+              <Field
+                type="number"
+                id="rawFrameCopyFromLine"
+                name="rawFrameCopyFromLine"
+              />
 
-          <label htmlFor="trackmode">Track mode</label>
-          <select id="trackmode">
-            <option value="FallingNotes">Falling notes</option>
-            <option value="Keys">Keys</option>
-          </select>
+              <label htmlFor="trackMode">Track mode</label>
+              <Field as="select" id="trackMode" name="trackMode">
+                <option value="Keys">Falling notes</option>
+                <option value="Keys">Keys</option>
+              </Field>
 
-          <label htmlFor="rawFrameSkip">Skip these many frames</label>
-          <input type="number" id="rawFrameSkip" defaultValue={10} />
+              <label htmlFor="numberOfFramesToSkip">
+                Skip these many frames
+              </label>
+              <Field
+                type="number"
+                id="numberOfFramesToSkip"
+                name="numberOfFramesToSkip"
+              />
 
-          <label htmlFor="rawFramesDivisiblyBy">
-            Process frames divisible by
-          </label>
-          <input type="number" id="rawFramesDivisiblyBy" defaultValue={1} />
+              <label htmlFor="processFramesDivisibleBy">
+                Process frames divisible by
+              </label>
+              <Field
+                type="number"
+                id="processFramesDivisibleBy"
+                name="processFramesDivisibleBy"
+              />
 
-          <label htmlFor="leftHandWhiteKeyColor">
-            Left hand white key color
-          </label>
-          <input type="color" id="leftHandWhiteKeyColor" />
+              <label htmlFor="leftHandWhiteKeyColor">
+                Left hand white key color
+              </label>
+              <Field
+                type="color"
+                id="leftHandWhiteKeyColor"
+                name="leftHandWhiteKeyColor"
+              />
 
-          <label htmlFor="leftHandBlackKeyColor">
-            Left hand black key color
-          </label>
-          <input type="color" id="leftHandBlackKeyColor" />
+              <label htmlFor="leftHandBlackKeyColor">
+                Left hand black key color
+              </label>
+              <Field
+                type="color"
+                id="leftHandBlackKeyColor"
+                name="leftHandBlackKeyColor"
+              />
 
-          <label htmlFor="rightHandWhiteKeyColor">
-            Right hand white key color
-          </label>
-          <input type="color" id="rightHandWhiteKeyColor" />
+              <label htmlFor="rightHandWhiteKeyColor">
+                Right hand white key color
+              </label>
+              <Field
+                type="color"
+                id="rightHandWhiteKeyColor"
+                name="rightHandWhiteKeyColor"
+              />
 
-          <label htmlFor="rightHandBlackKeyColor">
-            Right hand black key color
-          </label>
-          <input type="color" id="rightHandBlackKeyColor" />
-
-          <input type="submit" value="Process" />
-        </form>
+              <label htmlFor="rightHandBlackKeyColor">
+                Right hand black key color
+              </label>
+              <Field
+                type="color"
+                id="rightHandBlackKeyColor"
+                name="rightHandBlackKeyColor"
+              />
+              <Field type="submit" value="Process" id="submit" />
+            </Form>
+          )}
+        </Formik>
       </section>
     </article>
   );

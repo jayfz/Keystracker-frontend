@@ -31,3 +31,8 @@
     grid-column: 2;
     margin-top: 2rem;
 }
+
+.validationError{
+    grid-column: 2;
+    color:red;
+}

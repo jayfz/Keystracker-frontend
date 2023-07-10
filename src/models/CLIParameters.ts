@@ -21,6 +21,9 @@ export const createCLIParametersInputSchema = z.strictObject({
   outFileName: z.string().trim().nonempty().optional(),
 });
 
+
+
+
 export const UpdateCLIParametersInputSchema = createCLIParametersInputSchema
   .partial()
   .merge(DatabaseIdSchema);

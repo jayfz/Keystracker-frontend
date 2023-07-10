@@ -7,7 +7,7 @@ axios.defaults.headers.patch['Content-Type'] = 'application/json';
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-function deserializeProject (project: any): Project {
+function deserializeProject (project: any){
     project.createdAt = new Date(project.createdAt)
     project.updatedAt = new Date(project.createdAt)
     return project;
@@ -18,10 +18,9 @@ function deserializeProject (project: any): Project {
 export async function getAllProjects (): Promise<Project[]> {
 
     try {
-        const result = await axios.get(`/projects`);
-        const collection = result.data.data;
-        collection.forEach(deserializeProject);
-        return collection;
+        const {data: {data: projectCollection}} = await axios.get(`/projects`);
+        projectCollection.forEach(deserializeProject);
+        return projectCollection;
     } catch (error) {
         console.error(error);
         return [];
@@ -30,31 +29,31 @@ export async function getAllProjects (): Promise<Project[]> {
 
 export async function getProjectById (id: number): Promise<ProjectWithParameters | null>{
     try {
-        const {data} = await axios.get(`/projects/${id}`);
-        deserializeProject(data.data);
-        return data;
+        const {data:{data: project}} = await axios.get(`/projects/${id}`);
+        return deserializeProject(project);
+
     } catch (error) {
         console.error(error);
-        return null;
     }
+    return null;
 }
 
-export async function createProject (project: createProjectInput) : Promise<boolean>{
+export async function createProject (projectInput: createProjectInput) : Promise<Project | null>{
     try{
-        await axios.post(`/projects`, project );
-        return true;
+        const {data: {data: project}} = await axios.post(`/projects`, projectInput );
+        return deserializeProject(project);
     }
     catch(error){
         console.error(error);
     }
 
-    return false;
+    return null;
 }
 
-export async function updateProject (project: UpdateProjectInput): Promise<Project | null>{
+export async function updateProject (projectInput: UpdateProjectInput): Promise<Project | null>{
     try{
-        const result = await axios.patch(`/projects/${project.id}`, project);
-        return result.data.data;
+        const {data: {data:project}} = await axios.patch(`/projects/${projectInput.id}`, projectInput);
+        return deserializeProject(project);
     }
 
     catch(error){
