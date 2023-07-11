@@ -1,25 +1,18 @@
 import axios from 'axios'
+import { deserializeRecord, setAxiosDefaults } from './common';
 import { Project, ProjectWithParameters, UpdateProjectInput, createProjectInput } from '../models/Project';
 
-
-axios.defaults.baseURL = 'http://localhost:8000/api/';
-axios.defaults.headers.patch['Content-Type'] = 'application/json';
-axios.defaults.headers.post['Content-Type'] = 'application/json';
-
-/* eslint-disable @typescript-eslint/no-explicit-any */
-function deserializeProject (project: any){
-    project.createdAt = new Date(project.createdAt)
-    project.updatedAt = new Date(project.createdAt)
-    return project;
-}
-/* eslint-enable @typescript-eslint/no-explicit-any */
+setAxiosDefaults(axios);
 
 
-export async function getAllProjects (): Promise<Project[]> {
+
+
+
+async function getAllProjects (): Promise<Project[]> {
 
     try {
         const {data: {data: projectCollection}} = await axios.get(`/projects`);
-        projectCollection.forEach(deserializeProject);
+        projectCollection.forEach(deserializeRecord<Project>);
         return projectCollection;
     } catch (error) {
         console.error(error);
@@ -27,10 +20,10 @@ export async function getAllProjects (): Promise<Project[]> {
     }
 }
 
-export async function getProjectById (id: number): Promise<ProjectWithParameters | null>{
+async function getProjectById (id: number): Promise<ProjectWithParameters | null>{
     try {
         const {data:{data: project}} = await axios.get(`/projects/${id}`);
-        return deserializeProject(project);
+        return deserializeRecord<ProjectWithParameters>(project);
 
     } catch (error) {
         console.error(error);
@@ -38,10 +31,10 @@ export async function getProjectById (id: number): Promise<ProjectWithParameters
     return null;
 }
 
-export async function createProject (projectInput: createProjectInput) : Promise<Project | null>{
+async function createProject (projectInput: createProjectInput) : Promise<Project | null>{
     try{
         const {data: {data: project}} = await axios.post(`/projects`, projectInput );
-        return deserializeProject(project);
+        return deserializeRecord<Project>(project);
     }
     catch(error){
         console.error(error);
@@ -50,10 +43,10 @@ export async function createProject (projectInput: createProjectInput) : Promise
     return null;
 }
 
-export async function updateProject (projectInput: UpdateProjectInput): Promise<Project | null>{
+async function updateProject (projectInput: UpdateProjectInput): Promise<Project | null>{
     try{
         const {data: {data:project}} = await axios.patch(`/projects/${projectInput.id}`, projectInput);
-        return deserializeProject(project);
+        return deserializeRecord<Project>(project);
     }
 
     catch(error){
@@ -62,7 +55,7 @@ export async function updateProject (projectInput: UpdateProjectInput): Promise<
     return null;
 }
 
-export async function deleteProject(id: number) : Promise<boolean> {
+async function deleteProject(id: number) : Promise<boolean> {
     try {
         await axios.delete(`/projects/${id}`);
         return true;

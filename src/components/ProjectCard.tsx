@@ -21,8 +21,8 @@ export function ProjectCard(props: ProjectCardProps) {
   const onRoundedActionButtonClick = async () => {
     setLoading(true);
     await ProjectService.deleteProject(project.id);
-    triggerRefreshList();
     setLoading(false);
+    triggerRefreshList();
   };
 
   return (

@@ -1,17 +1,17 @@
 import { useState, useCallback } from "react";
-import styles from "./styles/CreateProjectPage.module.css";
-import ProjectService from "../services/ProjectService";
-import CLIParametersService from "../services/CLIParametersService";
+import styles from "../../components/styles/CreateProjectPage.module.css";
+import ProjectService from "../../services/ProjectService";
+import CLIParametersService from "../../services/CLIParametersService";
 
 import {
   CreateProjectInputSchema,
   createProjectInput,
-} from "../models/Project";
+} from "../../models/Project";
 import { Formik, Form, Field, ErrorMessage, FormikProps } from "formik";
 import {
   createCLIParametersInput,
   createCLIParametersInputSchema,
-} from "../models/CLIParameters";
+} from "../../models/CLIParameters";
 import { ZodError } from "zod";
 import { useBeforeUnload } from "react-router-dom";
 

@@ -10,3 +10,6 @@ export const DatabaseRecordSchema = DatabaseIdSchema.merge(
     createdAt: z.date(),
   })
 );
+
+export type DatabaseRecord = z.infer<typeof DatabaseRecordSchema>
+// export interface IDatabaseRecord extends DatabaseRecord{}
