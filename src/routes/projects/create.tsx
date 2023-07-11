@@ -30,6 +30,17 @@ function getErrorsFromZod(parsedResult: ZodError) {
 export default function CreateProjectPage() {
   const [projectId, setProjectId] = useState<number>(0);
 
+  useBeforeUnload(
+    useCallback(
+      (event) => {
+        event.preventDefault();
+        localStorage.setItem("id", JSON.stringify(projectId));
+        return (event.returnValue = "");
+      },
+      [projectId]
+    )
+  );
+
   const createProjectInitialValues: createProjectInput = {
     name: "",
     url: "",
@@ -39,7 +50,9 @@ export default function CreateProjectPage() {
     initialValues: createProjectInitialValues,
     async onSubmit(values: createProjectInput) {
       const project = CreateProjectInputSchema.parse(values);
-      const createdProject = await ProjectService.createProject(project);
+      const createdProject = await new ProjectService(
+        new AbortController().signal
+      ).createProject(project);
       if (createdProject) {
         setProjectId(createdProject.id);
       } else {
@@ -93,12 +106,6 @@ export default function CreateProjectPage() {
   const cliParametersFormEnabled = {
     display: projectId === 0 ? "none" : "inherit",
   };
-
-  useBeforeUnload(
-    useCallback(() => {
-      console.log("are you sure?", `${[projectId]}`);
-    }, [projectId])
-  );
 
   return (
     <article className={styles.createProjectPage}>

@@ -1,9 +1,7 @@
-import { useState } from "react";
-import ProjectService from "../services/ProjectService";
 import { RoundedActionButton } from "./RoundedActionButton";
 import { Project } from "../models/Project";
 import Utilities from "../Utilities";
-import { useListProjectsContext } from "../context/ListProjectsContext";
+import { useFetcher } from "react-router-dom";
 
 import styles from "./styles/ProjectCard.module.css";
 
@@ -13,21 +11,22 @@ type ProjectCardProps = {
 
 export function ProjectCard(props: ProjectCardProps) {
   const project = props.project;
-  const [loading, setLoading] = useState<boolean>(false);
-  const { triggerRefreshList } = useListProjectsContext();
 
   const thumbnailStyles = { backgroundImage: project?.thumbnail || "" };
 
+  const fetcher = useFetcher();
+
   const onRoundedActionButtonClick = async () => {
-    setLoading(true);
-    await ProjectService.deleteProject(project.id);
-    setLoading(false);
-    triggerRefreshList();
+    fetcher.submit(null, {
+      method: "DELETE",
+      action: `delete/${project.id}`,
+    });
   };
 
   return (
     <article className={styles.projectCard}>
       <section style={thumbnailStyles}>
+        {fetcher.state === "submitting" && <span>loading...</span>}
         <RoundedActionButton
           onClick={onRoundedActionButtonClick}
           variant="trash"
