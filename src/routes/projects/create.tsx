@@ -5,6 +5,7 @@ import CLIParametersService from "../../services/CLIParametersService";
 
 import {
   CreateProjectInputSchema,
+  Project,
   createProjectInput,
 } from "../../models/Project";
 import { Formik, Form, Field, ErrorMessage, FormikProps } from "formik";
@@ -13,7 +14,14 @@ import {
   createCLIParametersInputSchema,
 } from "../../models/CLIParameters";
 import { ZodError } from "zod";
-import { useBeforeUnload } from "react-router-dom";
+import {
+  ActionFunctionArgs,
+  useActionData,
+  useBeforeUnload,
+  useFetcher,
+  useRevalidator,
+  useSubmit,
+} from "react-router-dom";
 
 function getErrorsFromZod(parsedResult: ZodError) {
   const flattenedErrors = parsedResult.flatten().fieldErrors;
@@ -28,16 +36,34 @@ function getErrorsFromZod(parsedResult: ZodError) {
 }
 
 export default function CreateProjectPage() {
-  const [projectId, setProjectId] = useState<number>(0);
+  // const [projectId, setProjectId] = useState<number>(0);
+
+  const revalidator = useRevalidator();
+  console.log("revalidator state", revalidator.state);
+  const submit = useSubmit();
+  const project: Project | null = (useActionData() as Project) || null;
+  console.log("current project", project);
+
+  // function slow() {
+  //   for (let number = 0; number < 50_000_000; number++) {
+  //     res += Math.sqrt(number) * Math.random();
+  //   }
+  //   return res;
+  // }
+
+  const allowEditing = project !== null;
+  const mutationIntent = allowEditing ? "PATCH" : "POST";
 
   useBeforeUnload(
     useCallback(
       (event) => {
-        event.preventDefault();
-        localStorage.setItem("id", JSON.stringify(projectId));
-        return (event.returnValue = "");
+        if (project) {
+          event.preventDefault();
+          localStorage.setItem("id", JSON.stringify(project.id));
+          return (event.returnValue = "");
+        }
       },
-      [projectId]
+      [project]
     )
   );
 
@@ -49,94 +75,69 @@ export default function CreateProjectPage() {
   const createProjectFormProps = {
     initialValues: createProjectInitialValues,
     async onSubmit(values: createProjectInput) {
-      const project = CreateProjectInputSchema.parse(values);
-      const createdProject = await new ProjectService(
-        new AbortController().signal
-      ).createProject(project);
-      if (createdProject) {
-        setProjectId(createdProject.id);
-      } else {
-        //report error!
-      }
+      const projectToSubmit =
+        mutationIntent === "PATCH"
+          ? { id: project.id, name: values.name }
+          : values;
+      submit(
+        { project: projectToSubmit },
+        {
+          method: mutationIntent,
+          encType: "application/json",
+          action: "/projects",
+        }
+      );
     },
     validate(values: createProjectInput) {
       const parsedProjectInput = CreateProjectInputSchema.safeParse(values);
-      if (parsedProjectInput.success) return {};
-      return getErrorsFromZod(parsedProjectInput.error);
+      return parsedProjectInput.success
+        ? {}
+        : getErrorsFromZod(parsedProjectInput.error);
     },
   };
 
-  const createCLIParametersInitialValues: createCLIParametersInput = {
-    projectId,
-    inputVideoFilename: "",
-    leftHandWhiteKeyColor: "#000000",
-    leftHandBlackKeyColor: "#000000",
-    rightHandWhiteKeyColor: "#000000",
-    rightHandBlackKeyColor: "#000000",
-    firstOctaveAt: 0,
-    octavesLength: 0,
-    numberOfOctaves: 0,
-    rawFrameLinesToExtract: 0,
-    rawFrameCopyFromLine: 0,
-    trackMode: "Keys",
-    numberOfFramesToSkip: 0,
-    processFramesDivisibleBy: 1,
-    outFileName: "out.mid",
-  };
+  let step2 = <></>;
 
-  const createCLIParamtersForProjectFormProps = {
-    initialValues: createCLIParametersInitialValues,
-    async onSubmit(values: createCLIParametersInput) {
-      const cliParameters = createCLIParametersInputSchema.parse(values);
-      const result = await CLIParametersService.createCLIParameters(
-        cliParameters
-      );
-      if (!result) {
-        //report error!
-      }
-    },
-    validate(values: createCLIParametersInput) {
-      const parsedCLIParametersInput =
-        createCLIParametersInputSchema.safeParse(values);
-      if (parsedCLIParametersInput.success) return {};
-      return getErrorsFromZod(parsedCLIParametersInput.error);
-    },
-  };
+  if (project) {
+    const createCLIParametersInitialValues: createCLIParametersInput = {
+      projectId: project.id,
+      inputVideoFilename: "",
+      leftHandWhiteKeyColor: "#000000",
+      leftHandBlackKeyColor: "#000000",
+      rightHandWhiteKeyColor: "#000000",
+      rightHandBlackKeyColor: "#000000",
+      firstOctaveAt: 0,
+      octavesLength: 0,
+      numberOfOctaves: 0,
+      rawFrameLinesToExtract: 0,
+      rawFrameCopyFromLine: 0,
+      trackMode: "Keys",
+      numberOfFramesToSkip: 0,
+      processFramesDivisibleBy: 1,
+      outFileName: "out.mid",
+    };
 
-  const cliParametersFormEnabled = {
-    display: projectId === 0 ? "none" : "inherit",
-  };
+    const createCLIParamtersForProjectFormProps = {
+      initialValues: createCLIParametersInitialValues,
+      async onSubmit(values: createCLIParametersInput) {
+        const cliParameters = createCLIParametersInputSchema.parse(values);
+        const result = await CLIParametersService.createCLIParameters(
+          cliParameters
+        );
+        if (!result) {
+          //report error!
+        }
+      },
+      validate(values: createCLIParametersInput) {
+        const parsedCLIParametersInput =
+          createCLIParametersInputSchema.safeParse(values);
+        if (parsedCLIParametersInput.success) return {};
+        return getErrorsFromZod(parsedCLIParametersInput.error);
+      },
+    };
 
-  return (
-    <article className={styles.createProjectPage}>
-      <h1>Add a new project</h1>
-
-      <h2>Step 1</h2>
-      <Formik {...createProjectFormProps}>
-        {(props: FormikProps<createProjectInput>) => (
-          <Form>
-            <label htmlFor="name">Name</label>
-            <Field type="text" id="name" name="name" />
-            <ErrorMessage
-              name="name"
-              component="span"
-              className={styles.validationError}
-            />
-
-            <label htmlFor="url">URL</label>
-            <Field type="url" id="url" name="url" />
-            <ErrorMessage
-              name="url"
-              component="span"
-              className={styles.validationError}
-            />
-
-            <Field type="submit" value="Continue" id="submit" />
-          </Form>
-        )}
-      </Formik>
-
-      <section style={cliParametersFormEnabled}>
+    step2 = (
+      <section>
         <h2>Step 2</h2>
         <Formik {...createCLIParamtersForProjectFormProps}>
           {(props: FormikProps<createCLIParametersInput>) => (
@@ -236,6 +237,61 @@ export default function CreateProjectPage() {
           )}
         </Formik>
       </section>
+    );
+  }
+
+  return (
+    <article className={styles.createProjectPage}>
+      <h1>Add a new project</h1>
+
+      <h2>Step 1</h2>
+      <Formik {...createProjectFormProps}>
+        {(props: FormikProps<createProjectInput>) => (
+          <Form>
+            <label htmlFor="name">Name</label>
+            <Field type="text" id="name" name="name" />
+            <ErrorMessage
+              name="name"
+              component="span"
+              className={styles.validationError}
+            />
+
+            <label htmlFor="url">URL</label>
+            <Field type="url" id="url" name="url" disabled={allowEditing} />
+            <ErrorMessage
+              name="url"
+              component="span"
+              className={styles.validationError}
+            />
+
+            <Field type="submit" value="Continue" id="submit" />
+          </Form>
+        )}
+      </Formik>
+      {/* {slow()} */}
+      {project !== null && step2}
     </article>
   );
+}
+
+export async function action({ request }: ActionFunctionArgs) {
+  const { project } = await request.json();
+  const service = new ProjectService(request.signal);
+
+  let mutadedProject: Project | null = null;
+  let intent = "";
+  if (request.method === "POST") {
+    mutadedProject = await service.createProject(project);
+    intent = "create";
+  }
+
+  if (request.method === "PATCH") {
+    mutadedProject = await service.updateProject(project);
+    intent = "update";
+  }
+
+  if (!mutadedProject)
+    throw new Error(`the ${intent} project action could not be performed`);
+
+  return mutadedProject;
 }

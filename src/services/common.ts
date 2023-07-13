@@ -10,6 +10,6 @@ axios.defaults.headers.post['Content-Type'] = 'application/json';
 
 export function deserializeRecord<T extends DatabaseRecord> (record:T): T{
     record.createdAt = new Date(record.createdAt)
-    record.updatedAt = new Date(record.createdAt)
+    record.updatedAt = new Date(record.updatedAt)
     return record;
 }

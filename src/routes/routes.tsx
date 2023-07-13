@@ -5,7 +5,9 @@ import ProjectsPage, {
   loader as projectsLoader,
   action as projectsActions,
 } from "./projects/index";
-import CreateProjectPage from "./projects/create"; // has an action, not a provider
+import CreateProjectPage, {
+  action as createProjectAction,
+} from "./projects/create"; // has an action, not a provider
 
 export const applicationRouter = createBrowserRouter([
   {
@@ -17,6 +19,7 @@ export const applicationRouter = createBrowserRouter([
         path: "/projects/",
         element: <ProjectsPage />,
         loader: projectsLoader,
+        action: createProjectAction,
       },
       {
         path: "/projects/delete/:projectId",
