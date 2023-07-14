@@ -8,12 +8,18 @@
     border: 1px solid black;
     color:black;
     transition: color 0.2s ease, border 0.2s ease;
+
+}
+
+.roundedActionButton:hover{
+    cursor: pointer;
 }
 
 .rabDanger:hover{
     background-color: azure;
     color:coral;
     border: 1px solid coral;
+    
 }
 
 .rabSuccess:hover{

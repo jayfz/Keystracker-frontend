@@ -4,7 +4,9 @@
     cursor: pointer;
 }
 
-.projectCard > section:first-child{
+
+
+.projectCard > a > section:first-child{
 
     display: flex;
     justify-content: right;

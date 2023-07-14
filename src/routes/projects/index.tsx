@@ -5,6 +5,7 @@ import {
   LoaderFunctionArgs,
   useLoaderData,
 } from "react-router-dom";
+import { DatabaseIdSchema } from "../../models/common";
 
 export default function ProjectsPage() {
   const projects = useLoaderData() as Awaited<ReturnType<typeof loader>>;
@@ -23,12 +24,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export async function action({ request, params }: ActionFunctionArgs) {
+  console.log(request, params);
   if (request.method === "DELETE" && params.projectId) {
-    const id = parseInt(params.projectId);
-
-    if (isNaN(id)) {
-      throw new Error("invalid id to remove");
-    }
+    const { id } = DatabaseIdSchema.parse({ id: params.projectId });
     return await new ProjectService(request.signal).deleteProject(id);
   }
 }

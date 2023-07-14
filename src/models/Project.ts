@@ -5,7 +5,7 @@ import { CLIParameters } from "./CLIParameters.js";
 export const CreateProjectInputSchema = z.strictObject({
   name: z.string().trim().min(3, {message: "Name must be at least 3 characters long"}),
   url: z.string().trim().url({message: "Must be a valid URL"}).includes("youtube.com", {message: "The URL must be a Youtube URL"}),
-  thumbnail: z.string().nonempty().optional()
+  thumbnail: z.string().nonempty().nullable().optional()
 });
 
 export const UpdateProjectInputSchema =

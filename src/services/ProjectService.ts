@@ -75,13 +75,3 @@ export default class ProjectService{
     }
 
 }
-
-
-// export default  {
-//     getAllProjects,
-//     getProjectById,
-//     createProject,
-//     updateProject,
-//     deleteProject
-// }
-

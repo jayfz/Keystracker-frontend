@@ -3,11 +3,17 @@ import { createBrowserRouter, Navigate } from "react-router-dom";
 import Root from ".";
 import ProjectsPage, {
   loader as projectsLoader,
-  action as projectsActions,
+  action as deleteProjectAction,
 } from "./projects/index";
+
 import CreateProjectPage, {
   action as createProjectAction,
 } from "./projects/create"; // has an action, not a provider
+
+import EditProjectPage, {
+  loader as EditProjectPageLoader,
+  action as EditProjectPageAction,
+} from "./projects/edit";
 
 export const applicationRouter = createBrowserRouter([
   {
@@ -19,16 +25,22 @@ export const applicationRouter = createBrowserRouter([
         path: "/projects/",
         element: <ProjectsPage />,
         loader: projectsLoader,
-        action: createProjectAction,
       },
       {
-        path: "/projects/delete/:projectId",
-        action: projectsActions,
+        path: "/projects/:projectId/delete",
+        action: deleteProjectAction,
       },
 
       {
         path: "/projects/create",
         element: <CreateProjectPage />,
+        action: createProjectAction,
+      },
+      {
+        path: "/projects/:projectId/edit",
+        element: <EditProjectPage />,
+        loader: EditProjectPageLoader,
+        action: EditProjectPageAction,
       },
     ],
   },

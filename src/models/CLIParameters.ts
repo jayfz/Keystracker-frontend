@@ -4,7 +4,7 @@ import { DatabaseRecordSchema, DatabaseIdSchema } from "./common.js";
 const hexColorRegex = new RegExp("#[0-9A-Fa-f]{6}", "g");
 
 export const createCLIParametersInputSchema = z.strictObject({
-  projectId: z.number().int().positive(),
+  projectId: z.coerce.number().int().positive(),
   inputVideoFilename: z.string().min(6),
   leftHandWhiteKeyColor: z.string().trim().toUpperCase().regex(hexColorRegex),
   leftHandBlackKeyColor: z.string().trim().toUpperCase().regex(hexColorRegex),

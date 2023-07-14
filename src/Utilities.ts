@@ -1,3 +1,5 @@
+import { ZodError } from "zod";
+
 function getTimeAgo(date: Date) {
     const currentDate = new Date();
     const pastDate = new Date(date);
@@ -28,6 +30,20 @@ function getTimeAgo(date: Date) {
     return seconds <= 30 ? "just now" : seconds + " seconds ago";
   }
 
+
+  function getErrorsFromZod(parsedResult: ZodError) {
+    const flattenedErrors = parsedResult.flatten().fieldErrors;
+    console.log("flattenedErrors", flattenedErrors);
+  
+    const errors: any = {};
+    for (const key in flattenedErrors) {
+      errors[key] =
+        flattenedErrors[key as keyof typeof flattenedErrors]?.join(", also ");
+    }
+    return errors;
+  }
+
   export default {
-    getTimeAgo
+    getTimeAgo,
+    getErrorsFromZod
   }
