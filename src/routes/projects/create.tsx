@@ -11,6 +11,7 @@ import {
 } from "../../models/Project";
 
 import ProjectForm from "./form";
+import AnimatedPage, { fadeInAnimation } from "@/components/AnimatedPage";
 
 export default function CreateProjectPage() {
   const submit = useSubmit();
@@ -41,11 +42,13 @@ export default function CreateProjectPage() {
   };
 
   return (
-    <article className={styles.createProjectPage}>
-      <h1>Add a new project</h1>
+    <AnimatedPage animation={fadeInAnimation}>
+      <article className={styles.createProjectPage}>
+        <h1>Add a new project</h1>
 
-      <ProjectForm {...createProjectFormProps} formIntent={"create"} />
-    </article>
+        <ProjectForm {...createProjectFormProps} formIntent={"create"} />
+      </article>
+    </AnimatedPage>
   );
 }
 

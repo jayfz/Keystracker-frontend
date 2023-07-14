@@ -6,15 +6,16 @@ import {
   useLoaderData,
 } from "react-router-dom";
 import { DatabaseIdSchema } from "../../models/common";
+import AnimatedPage, { fadeInAnimation } from "@/components/AnimatedPage";
 
 export default function ProjectsPage() {
   const projects = useLoaderData() as Awaited<ReturnType<typeof loader>>;
 
   return (
-    <>
+    <AnimatedPage animation={fadeInAnimation}>
       <h1>Keystracker Projects</h1>
       <ListProjects {...projects} />
-    </>
+    </AnimatedPage>
   );
 }
 
