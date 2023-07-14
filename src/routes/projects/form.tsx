@@ -7,7 +7,7 @@ import {
   FormikProps,
   FormikConfig,
 } from "formik";
-import { createProjectInput } from "../../models/Project";
+import { createProjectInput } from "@/models/Project";
 
 type ProjectFormProps = {
   initialValues: FormikConfig<createProjectInput>["initialValues"];

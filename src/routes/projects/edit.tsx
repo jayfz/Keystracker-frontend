@@ -2,7 +2,7 @@ import { DatabaseIdSchema } from "../../models/common";
 
 import styles from "../../components/styles/CreateProjectPage.module.css";
 
-import ProjectService from "../../services/ProjectService";
+import ProjectService from "@/services/ProjectService";
 import {
   ActionFunctionArgs,
   LoaderFunctionArgs,
