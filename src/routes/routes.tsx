@@ -41,6 +41,14 @@ export const applicationRouter = createBrowserRouter([
         element: <EditProjectPage />,
         loader: EditProjectPageLoader,
         action: EditProjectPageAction,
+        children: [
+          {
+            path: "cli-parameters/create",
+          },
+          {
+            path: "cli-parameters/:parameterId/edit",
+          },
+        ],
       },
     ],
   },
