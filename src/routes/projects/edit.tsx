@@ -13,16 +13,18 @@ import Utils from "../../Utilities";
 
 import {
   Project,
+  ProjectWithParameters,
   UpdateProjectInputSchema,
   createProjectInput,
 } from "../../models/Project";
 
 import ProjectForm from "./form";
 import AnimatedPage, { fadeInAnimation } from "@/components/AnimatedPage";
+import ListCLIParameters from "../cliParameters/list";
 
 export default function EditProjectPage() {
   const submit = useSubmit();
-  const project = useLoaderData() as Project;
+  const project = useLoaderData() as ProjectWithParameters;
 
   async function validate(values: createProjectInput) {
     const project = UpdateProjectInputSchema.safeParse(values);
@@ -56,6 +58,7 @@ export default function EditProjectPage() {
         <h1>Edit project</h1>
         <ProjectForm {...editProjectFormProps} formIntent={"update"} />
       </article>
+      <ListCLIParameters elements={project.cliParameters} />
     </AnimatedPage>
   );
 }
