@@ -3,6 +3,7 @@ import { MouseEventHandler } from "react";
 import { Link } from "react-router-dom";
 import { useFetcher } from "react-router-dom";
 import styles from "./list.module.css";
+import { Table, Tbody, Th, Thead, Tr, Td } from "@chakra-ui/react";
 type ListCLIParametersProps = {
   elements: CLIParameters[];
 };
@@ -19,33 +20,40 @@ export default function ListCLIParameters(props: ListCLIParametersProps) {
   };
 
   return (
-    <article className={styles.ListCLIParameters}>
-      <table>
-        <tr>
-          <th>Id</th>
-          <th>Track Mode</th>
-          <th>Start copy from</th>
-          <th>Input File name</th>
-          <th>Actions</th>
-        </tr>
-        {props.elements.map((item) => {
-          return (
-            <tr key={item.id}>
-              <td>
-                <Link to={`cli-parameters/${item.id}/edit`}>{item.id}</Link>
-              </td>
-              <td>{item.trackMode}</td>
-              <td>{item.rawFrameCopyFromLine}</td>
-              <td>{item.inputVideoFilename}</td>
-              <td>
-                <button onClick={onClickHandler} data-cliparameter-id={item.id}>
-                  Delete
-                </button>
-              </td>
-            </tr>
-          );
-        })}
-      </table>
+    <article>
+      <Table variant={"simple"}>
+        <Thead>
+          <Tr>
+            <Th>Id</Th>
+            <Th>Track Mode</Th>
+            <Th>Start copy from</Th>
+            <Th>Input File name</Th>
+            <Th>Actions</Th>
+          </Tr>
+        </Thead>
+        <Tbody>
+          {props.elements.map((item) => {
+            return (
+              <Tr key={item.id}>
+                <Td>
+                  <Link to={`cli-parameters/${item.id}/edit`}>{item.id}</Link>
+                </Td>
+                <Td>{item.trackMode}</Td>
+                <Td>{item.rawFrameCopyFromLine}</Td>
+                <Td>{item.inputVideoFilename}</Td>
+                <Td>
+                  <button
+                    onClick={onClickHandler}
+                    data-cliparameter-id={item.id}
+                  >
+                    Delete
+                  </button>
+                </Td>
+              </Tr>
+            );
+          })}
+        </Tbody>
+      </Table>
     </article>
   );
 }

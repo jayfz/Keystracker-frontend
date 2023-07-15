@@ -10,6 +10,12 @@ type ProjectCardProps = {
 };
 
 import { MouseEventHandler } from "react";
+import {
+  AbsoluteCenter,
+  Center,
+  CircularProgress,
+  CircularProgressLabel,
+} from "@chakra-ui/react";
 
 export function ProjectCard(props: ProjectCardProps) {
   const project = props.project;
@@ -42,8 +48,13 @@ export function ProjectCard(props: ProjectCardProps) {
   return (
     <article className={styles.projectCard}>
       <Link to={`${project.id}/edit`}>
-        <section style={thumbnail}>
-          {fetcher.state === "submitting" && <span>loading...</span>}
+        <section style={{ ...thumbnail, position: "relative" }}>
+          {/* {fetcher.state === "submitting" && <span>loading...</span>} */}
+          {fetcher.state === "submitting" && (
+            <AbsoluteCenter>
+              <CircularProgress thickness={4} size={10} isIndeterminate />
+            </AbsoluteCenter>
+          )}
           <RoundedActionButton
             onClick={onRoundedActionButtonClick}
             variant="trash"
