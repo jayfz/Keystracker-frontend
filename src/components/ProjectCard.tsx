@@ -10,12 +10,7 @@ type ProjectCardProps = {
 };
 
 import { MouseEventHandler } from "react";
-import {
-  AbsoluteCenter,
-  Center,
-  CircularProgress,
-  CircularProgressLabel,
-} from "@chakra-ui/react";
+import { AbsoluteCenter, CircularProgress } from "@chakra-ui/react";
 
 export function ProjectCard(props: ProjectCardProps) {
   const project = props.project;

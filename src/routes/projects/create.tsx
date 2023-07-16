@@ -12,6 +12,7 @@ import {
 
 import ProjectForm from "./form";
 import AnimatedPage, { fadeInAnimation } from "@/components/AnimatedPage";
+import { Heading } from "@chakra-ui/react";
 
 export default function CreateProjectPage() {
   const submit = useSubmit();
@@ -44,7 +45,7 @@ export default function CreateProjectPage() {
   return (
     <AnimatedPage animation={fadeInAnimation}>
       <article className={styles.createProjectPage}>
-        <h1>Add a new project</h1>
+        <Heading>Add a new project</Heading>
 
         <ProjectForm {...createProjectFormProps} formIntent={"create"} />
       </article>

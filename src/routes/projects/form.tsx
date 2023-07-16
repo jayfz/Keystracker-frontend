@@ -8,6 +8,13 @@ import {
   FormikConfig,
 } from "formik";
 import { createProjectInput } from "@/models/Project";
+import {
+  FormControl,
+  FormLabel,
+  Input as ChackraInput,
+  FormErrorMessage,
+  Button,
+} from "@chakra-ui/react";
 
 type ProjectFormProps = {
   initialValues: FormikConfig<createProjectInput>["initialValues"];
@@ -26,28 +33,39 @@ export default function ProjectForm(projectFormProps: ProjectFormProps) {
     <Formik {...projectFormProps}>
       {(props: FormikProps<createProjectInput>) => (
         <Form>
-          <label htmlFor="name">Name</label>
-          <Field type="text" id="name" name="name" />
-          <ErrorMessage
-            name="name"
-            component="span"
-            className={styles.validationError}
-          />
+          <FormControl isInvalid={Boolean(props.errors.name)}>
+            <FormLabel htmlFor="name">Name</FormLabel>
+            <Field
+              as={ChackraInput}
+              type="text"
+              id="name"
+              name="name"
+              variant="filled"
+            />
+            <ErrorMessage component={FormErrorMessage} name="name" />
+          </FormControl>
 
-          <label htmlFor="url">URL</label>
-          <Field type="url" id="url" name="url" disabled={shouldDisableField} />
-          <ErrorMessage
-            name="url"
-            component="span"
-            className={styles.validationError}
-          />
+          <FormControl isInvalid={Boolean(props.errors.url)}>
+            <FormLabel htmlFor="url">URL</FormLabel>
+            <Field
+              as={ChackraInput}
+              type="url"
+              id="url"
+              name="url"
+              variant="filled"
+            />
+            <ErrorMessage component={FormErrorMessage} name="url" />
+          </FormControl>
 
-          <Field
-            type="submit"
-            id="submit"
-            value={submitButtonText}
-            disabled={!props.dirty || !props.isValid}
-          />
+          <FormControl>
+            <Button
+              disabled={!props.dirty || !props.isValid}
+              isLoading={props.isSubmitting}
+              type="submit"
+            >
+              Submit
+            </Button>
+          </FormControl>
         </Form>
       )}
     </Formik>
