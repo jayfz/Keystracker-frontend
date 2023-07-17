@@ -3,14 +3,23 @@ import { Project } from "../models/Project";
 import Utilities from "../Utilities";
 import { useFetcher, Link } from "react-router-dom";
 
-import styles from "./styles/ProjectCard.module.css";
+// import styles from "./styles/ProjectCard.module.css";
 
 type ProjectCardProps = {
   project: Project;
 };
 
 import { MouseEventHandler } from "react";
-import { AbsoluteCenter, CircularProgress } from "@chakra-ui/react";
+import {
+  AbsoluteCenter,
+  Box,
+  CircularProgress,
+  Flex,
+  Heading,
+  VStack,
+  Text,
+  AspectRatio,
+} from "@chakra-ui/react";
 
 export function ProjectCard(props: ProjectCardProps) {
   const project = props.project;
@@ -24,43 +33,46 @@ export function ProjectCard(props: ProjectCardProps) {
   const onRoundedActionButtonClick: MouseEventHandler<HTMLButtonElement> = (
     event
   ) => {
-    // if (event.target === target) {
-
-    // if (event.defaultPrevented) return; // Exits here if event has been handled
     event.preventDefault();
 
     fetcher.submit(null, {
       method: "DELETE",
       action: `${project.id}/delete`,
     });
-    // event.stopPropagation();
-    // event.nativeEvent.stopImmediatePropagation();
-    // } else {
-    //   window.resulty = { event, target };
-    // }
   };
 
   return (
-    <article className={styles.projectCard}>
+    <Box>
       <Link to={`${project.id}/edit`}>
-        <section style={{ ...thumbnail, position: "relative" }}>
-          {/* {fetcher.state === "submitting" && <span>loading...</span>} */}
-          {fetcher.state === "submitting" && (
-            <AbsoluteCenter>
-              <CircularProgress thickness={4} size={10} isIndeterminate />
-            </AbsoluteCenter>
-          )}
-          <RoundedActionButton
-            onClick={onRoundedActionButtonClick}
-            variant="trash"
-          />
-        </section>
+        <AspectRatio ratio={16 / 9}>
+          <Box
+            style={{ ...thumbnail, justifyContent: "flex-end" }}
+            bgGradient={"linear(to-b, blue.50, orange.50)"}
+            borderRadius={"2xl"}
+          >
+            {fetcher.state === "submitting" && (
+              <AbsoluteCenter>
+                <CircularProgress thickness={4} size={10} isIndeterminate />
+              </AbsoluteCenter>
+            )}
 
-        <section>
-          <p>{project.name}</p>
-          <p>{Utilities.getTimeAgo(project.createdAt)}</p>
-        </section>
+            <RoundedActionButton
+              style={{ alignSelf: "flex-start" }}
+              onClick={onRoundedActionButtonClick}
+              variant="trash"
+            />
+          </Box>
+        </AspectRatio>
+
+        <VStack p={4} spacing={0} align={"flex-start"}>
+          <Heading size={"sm"} noOfLines={2}>
+            {project.name}
+          </Heading>
+          <Text color="gray.500">
+            {Utilities.getTimeAgo(project.createdAt)}
+          </Text>
+        </VStack>
       </Link>
-    </article>
+    </Box>
   );
 }

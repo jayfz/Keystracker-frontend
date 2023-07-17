@@ -14,6 +14,7 @@ import EditProjectPage, {
   loader as EditProjectPageLoader,
   action as EditProjectPageAction,
 } from "./projects/edit";
+import Playground from "./playground";
 
 export const applicationRouter = createBrowserRouter([
   {
@@ -49,6 +50,10 @@ export const applicationRouter = createBrowserRouter([
             path: "cli-parameters/:parameterId/edit",
           },
         ],
+      },
+      {
+        path: "/playground",
+        element: <Playground />,
       },
     ],
   },

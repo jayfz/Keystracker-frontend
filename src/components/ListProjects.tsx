@@ -5,6 +5,7 @@ import { CreateProjectCard } from "./CreateProjectCard";
 import { ListProjectsContext } from "../context/ListProjectsContext";
 
 import styles from "./styles/ListProjects.module.css";
+import { SimpleGrid } from "@chakra-ui/react";
 
 type ListProjectsProps = {
   projects: Project[];
@@ -19,7 +20,14 @@ export default function ListProjects(props: ListProjectsProps) {
 
   return (
     <ListProjectsContext.Provider value={{ triggerRefreshList }}>
-      <ul className={styles["grid-layout"]}>
+      <SimpleGrid minChildWidth={"272px"} spacing={4}>
+        {props.projects.map((p) => (
+          <ProjectCard key={p.id} project={p} />
+        ))}
+
+        <CreateProjectCard />
+      </SimpleGrid>
+      {/* <ul className={styles["grid-layout"]}>
         {props.projects.map((p) => (
           <li key={p.id}>
             <ProjectCard project={p} />
@@ -28,7 +36,7 @@ export default function ListProjects(props: ListProjectsProps) {
         <li>
           <CreateProjectCard />
         </li>
-      </ul>
+      </ul> */}
     </ListProjectsContext.Provider>
   );
 }

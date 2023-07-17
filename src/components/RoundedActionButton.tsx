@@ -4,6 +4,7 @@ import { MouseEventHandler } from "react";
 type RoundedActionButtonProps = {
   onClick?: MouseEventHandler;
   variant: "trash" | "plus";
+  style?: object;
 };
 
 export function RoundedActionButton(props: RoundedActionButtonProps) {
@@ -11,6 +12,7 @@ export function RoundedActionButton(props: RoundedActionButtonProps) {
     props.variant == "trash" ? styles.rabDanger : styles.rabSuccess;
   return (
     <button
+      style={{ ...props.style }}
       onClick={props.onClick}
       className={`${styles.roundedActionButton} ${hoverBehavior}`}
     >
