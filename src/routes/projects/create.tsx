@@ -1,14 +1,12 @@
-import styles from "../../components/styles/CreateProjectPage.module.css";
-
-import ProjectService from "../../services/ProjectService";
+import ProjectService from "@/services/ProjectService";
 import { ActionFunctionArgs, redirect, useSubmit } from "react-router-dom";
-import Utils from "../../Utilities";
+import Utils from "@/Utilities";
 
 import {
   CreateProjectInputSchema,
   UpdateProjectInput,
   createProjectInput,
-} from "../../models/Project";
+} from "@/models/Project";
 
 import ProjectForm from "./form";
 import AnimatedPage, { fadeInAnimation } from "@/components/AnimatedPage";
@@ -44,11 +42,9 @@ export default function CreateProjectPage() {
 
   return (
     <AnimatedPage animation={fadeInAnimation}>
-      <article className={styles.createProjectPage}>
-        <Heading>Add a new project</Heading>
+      <Heading>Add a new project</Heading>
 
-        <ProjectForm {...createProjectFormProps} formIntent={"create"} />
-      </article>
+      <ProjectForm {...createProjectFormProps} formIntent={"create"} />
     </AnimatedPage>
   );
 }

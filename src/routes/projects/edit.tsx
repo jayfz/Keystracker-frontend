@@ -1,6 +1,4 @@
-import { DatabaseIdSchema } from "../../models/common";
-
-import styles from "../../components/styles/CreateProjectPage.module.css";
+import { DatabaseIdSchema } from "@/models/common";
 
 import ProjectService from "@/services/ProjectService";
 import {
@@ -9,10 +7,9 @@ import {
   useLoaderData,
   useSubmit,
 } from "react-router-dom";
-import Utils from "../../Utilities";
+import Utils from "@/Utilities";
 
 import {
-  Project,
   ProjectWithParameters,
   UpdateProjectInputSchema,
   createProjectInput,
@@ -54,10 +51,8 @@ export default function EditProjectPage() {
 
   return (
     <AnimatedPage animation={fadeInAnimation}>
-      <article className={styles.createProjectPage}>
-        <h1>Edit project</h1>
-        <ProjectForm {...editProjectFormProps} formIntent={"update"} />
-      </article>
+      <h1>Edit project</h1>
+      <ProjectForm {...editProjectFormProps} formIntent={"update"} />
       <ListCLIParameters elements={project.cliParameters} />
     </AnimatedPage>
   );

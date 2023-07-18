@@ -1,4 +1,3 @@
-import styles from "../../components/styles/CreateProjectPage.module.css";
 import {
   Formik,
   Form,
@@ -53,6 +52,7 @@ export default function ProjectForm(projectFormProps: ProjectFormProps) {
               id="url"
               name="url"
               variant="filled"
+              disabled={shouldDisableField}
             />
             <ErrorMessage component={FormErrorMessage} name="url" />
           </FormControl>
@@ -63,7 +63,7 @@ export default function ProjectForm(projectFormProps: ProjectFormProps) {
               isLoading={props.isSubmitting}
               type="submit"
             >
-              Submit
+              {submitButtonText}
             </Button>
           </FormControl>
         </Form>

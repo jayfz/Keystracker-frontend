@@ -1,9 +1,7 @@
-import { RoundedActionButton } from "./RoundedActionButton";
-import { Project } from "../models/Project";
-import Utilities from "../Utilities";
+import { RoundedActionButton } from "@/components/RoundedActionButton";
+import { Project } from "@/models/Project";
+import Utilities from "@/Utilities";
 import { useFetcher, Link } from "react-router-dom";
-
-// import styles from "./styles/ProjectCard.module.css";
 
 type ProjectCardProps = {
   project: Project;
@@ -14,7 +12,6 @@ import {
   AbsoluteCenter,
   Box,
   CircularProgress,
-  Flex,
   Heading,
   VStack,
   Text,
@@ -49,6 +46,9 @@ export function ProjectCard(props: ProjectCardProps) {
             style={{ ...thumbnail, justifyContent: "flex-end" }}
             bgGradient={"linear(to-b, blue.50, orange.50)"}
             borderRadius={"2xl"}
+            shadow={"sm"}
+            border={"1px"}
+            borderColor={"gray.300"}
           >
             {fetcher.state === "submitting" && (
               <AbsoluteCenter>
