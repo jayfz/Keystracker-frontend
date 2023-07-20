@@ -13,6 +13,7 @@ import {
   Input as ChackraInput,
   FormErrorMessage,
   Button,
+  VStack,
 } from "@chakra-ui/react";
 
 type ProjectFormProps = {
@@ -28,44 +29,45 @@ export default function ProjectForm(projectFormProps: ProjectFormProps) {
       ? "Update Project"
       : "Create Project";
   const shouldDisableField = projectFormProps.formIntent === "update";
+
   return (
     <Formik {...projectFormProps}>
       {(props: FormikProps<createProjectInput>) => (
         <Form>
-          <FormControl isInvalid={Boolean(props.errors.name)}>
-            <FormLabel htmlFor="name">Name</FormLabel>
-            <Field
-              as={ChackraInput}
-              type="text"
-              id="name"
-              name="name"
-              variant="filled"
-            />
-            <ErrorMessage component={FormErrorMessage} name="name" />
-          </FormControl>
+          <VStack spacing={6} maxW={"container.lg"}>
+            <FormControl isInvalid={Boolean(props.errors.name)}>
+              <FormLabel htmlFor="name">Name</FormLabel>
+              <Field
+                as={ChackraInput}
+                type="text"
+                id="name"
+                name="name"
+                variant="filled"
+              />
+              <ErrorMessage component={FormErrorMessage} name="name" />
+            </FormControl>
 
-          <FormControl isInvalid={Boolean(props.errors.url)}>
-            <FormLabel htmlFor="url">URL</FormLabel>
-            <Field
-              as={ChackraInput}
-              type="url"
-              id="url"
-              name="url"
-              variant="filled"
-              disabled={shouldDisableField}
-            />
-            <ErrorMessage component={FormErrorMessage} name="url" />
-          </FormControl>
-
-          <FormControl>
+            <FormControl isInvalid={Boolean(props.errors.url)}>
+              <FormLabel htmlFor="url">URL</FormLabel>
+              <Field
+                as={ChackraInput}
+                type="url"
+                id="url"
+                name="url"
+                variant="filled"
+                disabled={shouldDisableField}
+              />
+              <ErrorMessage component={FormErrorMessage} name="url" />
+            </FormControl>
             <Button
-              disabled={!props.dirty || !props.isValid}
+              isDisabled={!props.dirty || !props.isValid}
               isLoading={props.isSubmitting}
               type="submit"
+              colorScheme="blue"
             >
               {submitButtonText}
             </Button>
-          </FormControl>
+          </VStack>
         </Form>
       )}
     </Formik>

@@ -5,6 +5,7 @@ import {
   ActionFunctionArgs,
   LoaderFunctionArgs,
   useLoaderData,
+  useLocation,
   useSubmit,
 } from "react-router-dom";
 import Utils from "@/Utilities";
@@ -18,25 +19,35 @@ import {
 import ProjectForm from "./form";
 import AnimatedPage, { fadeInAnimation } from "@/components/AnimatedPage";
 import ListCLIParameters from "../cliParameters/list";
+import { useEffect } from "react";
+import { useToast } from "@chakra-ui/react";
 
 export default function EditProjectPage() {
   const submit = useSubmit();
   const project = useLoaderData() as ProjectWithParameters;
+  const toast = useToast();
+
+  const location = useLocation();
 
   async function validate(values: createProjectInput) {
     const project = UpdateProjectInputSchema.safeParse(values);
     return project.success ? {} : Utils.getErrorsFromZod(project.error);
   }
 
-  async function onSubmit(values: createProjectInput) {
-    const options = {
-      method: "PATCH",
-      encType: "application/json",
-    } as const;
-
+  async function onSubmit(values: createProjectInput, submitProps: any) {
     //TODO loadash const changedProperties = _.pickBy(afterChange, (value, key) => !_.isEqual(value, beforeChange[key]));
 
-    submit({ project: values }, options);
+    submit(
+      { project: values },
+      {
+        method: "PATCH",
+        encType: "application/json",
+        state: { updated: true },
+        replace: true,
+      }
+    );
+
+    submitProps.resetForm({ values });
   }
 
   const editProjectFormProps = {
@@ -48,6 +59,39 @@ export default function EditProjectPage() {
     onSubmit,
     validate,
   };
+
+  useEffect(() => {
+    let toastRef: null | ReturnType<typeof toast> = null;
+    if (location.state?.updated) {
+      toastRef = toast({
+        title: "Project updated.",
+        description: "We've updated the project for you.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+
+      window.history.replaceState({ updated: false }, "");
+    }
+
+    if (location.state?._isRedirect) {
+      toastRef = toast({
+        title: "Project created.",
+        description: "We've created the project for you.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+
+      window.history.replaceState({ _isRedirect: false }, "");
+    }
+
+    return () => {
+      if (toastRef) {
+        toast.close(toastRef);
+      }
+    };
+  }, [location, toast]);
 
   return (
     <AnimatedPage animation={fadeInAnimation}>

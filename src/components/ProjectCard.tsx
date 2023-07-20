@@ -3,10 +3,6 @@ import { Project } from "@/models/Project";
 import Utilities from "@/Utilities";
 import { useFetcher, Link } from "react-router-dom";
 
-type ProjectCardProps = {
-  project: Project;
-};
-
 import { MouseEventHandler } from "react";
 import {
   AbsoluteCenter,
@@ -17,6 +13,10 @@ import {
   Text,
   AspectRatio,
 } from "@chakra-ui/react";
+
+type ProjectCardProps = {
+  project: Project;
+};
 
 export function ProjectCard(props: ProjectCardProps) {
   const project = props.project;
@@ -57,7 +57,6 @@ export function ProjectCard(props: ProjectCardProps) {
             )}
 
             <RoundedActionButton
-              style={{ alignSelf: "flex-start" }}
               onClick={onRoundedActionButtonClick}
               variant="trash"
             />

@@ -4,7 +4,6 @@ import { AddIcon } from "@chakra-ui/icons";
 type RoundedActionButtonProps = {
   onClick?: MouseEventHandler;
   variant: "trash" | "plus";
-  style?: object;
 };
 
 export function RoundedActionButton(props: RoundedActionButtonProps) {
@@ -14,7 +13,7 @@ export function RoundedActionButton(props: RoundedActionButtonProps) {
       borderRadius={"full"}
       m={3}
       p={3}
-      style={props.style}
+      alignSelf={"flex-start"}
       size={"sm"}
       onClick={props.onClick}
       _hover={{

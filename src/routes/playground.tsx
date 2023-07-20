@@ -1,9 +1,9 @@
 import {
   AspectRatio,
   Box,
+  Button,
   CloseButton,
   Container,
-  Flex,
   Progress,
   Text,
 } from "@chakra-ui/react";
@@ -12,6 +12,9 @@ export default function Playground() {
   return (
     <Box>
       <CloseButton colorScheme="green" />
+      <Button isDisabled={true} colorScheme="green">
+        HILO
+      </Button>
       <Progress size="xs" isIndeterminate colorScheme="blue" />
       <Container maxW="container.xl" bg="blue.200" centerContent>
         <AspectRatio ratio={16 / 9} bg={"purple.300"} w={"600px"}>
