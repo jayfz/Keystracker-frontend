@@ -8,10 +8,12 @@ import {
 import { DatabaseIdSchema } from "@/models/common";
 import AnimatedPage, { fadeInAnimation } from "@/components/AnimatedPage";
 import { Heading } from "@chakra-ui/react";
+import useTitle from "@/hooks/useTitle";
 
 export default function ProjectsPage() {
   const projects = useLoaderData() as Awaited<ReturnType<typeof loader>>;
 
+  useTitle("Projects");
   return (
     <AnimatedPage animation={fadeInAnimation}>
       <Heading as="h1">Keystracker Projects</Heading>

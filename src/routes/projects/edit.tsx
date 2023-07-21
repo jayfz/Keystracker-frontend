@@ -7,6 +7,10 @@ import {
   useLoaderData,
   useLocation,
   useSubmit,
+  Link as RouterLink,
+  useFetcher,
+  Outlet,
+  useOutletContext,
 } from "react-router-dom";
 import Utils from "@/Utilities";
 
@@ -20,10 +24,12 @@ import ProjectForm from "./form";
 import AnimatedPage, { fadeInAnimation } from "@/components/AnimatedPage";
 import ListCLIParameters from "../cliParameters/list";
 import { useEffect } from "react";
-import { useToast } from "@chakra-ui/react";
+import { Button, Heading, useToast } from "@chakra-ui/react";
+import useTitle from "@/hooks/useTitle";
 
 export default function EditProjectPage() {
   const submit = useSubmit();
+  const fetcher = useFetcher();
   const project = useLoaderData() as ProjectWithParameters;
   const toast = useToast();
 
@@ -50,6 +56,13 @@ export default function EditProjectPage() {
     submitProps.resetForm({ values });
   }
 
+  const onElementRemove = (id: number) => {
+    fetcher.submit(null, {
+      method: "DELETE",
+      action: `cli-parameters/${id}`,
+    });
+  };
+
   const editProjectFormProps = {
     initialValues: {
       id: project.id,
@@ -59,6 +72,8 @@ export default function EditProjectPage() {
     onSubmit,
     validate,
   };
+
+  useTitle("Edit project");
 
   useEffect(() => {
     let toastRef: null | ReturnType<typeof toast> = null;
@@ -95,11 +110,26 @@ export default function EditProjectPage() {
 
   return (
     <AnimatedPage animation={fadeInAnimation}>
-      <h1>Edit project</h1>
+      <Heading>Edit project</Heading>
       <ProjectForm {...editProjectFormProps} formIntent={"update"} />
-      <ListCLIParameters elements={project.cliParameters} />
+      <Heading fontSize={"2xl"}>
+        Project's set of parameters.{" "}
+        <Button to="cli-parameters/create" as={RouterLink}>
+          Create a new one
+        </Button>
+      </Heading>
+
+      <ListCLIParameters
+        elements={project.cliParameters}
+        onElementRemove={onElementRemove}
+      />
+      <Outlet context={project satisfies ProjectWithParameters} />
     </AnimatedPage>
   );
+}
+
+export function useProject() {
+  return useOutletContext<ProjectWithParameters>();
 }
 
 export async function loader({ params, request }: LoaderFunctionArgs) {

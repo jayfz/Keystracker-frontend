@@ -34,7 +34,7 @@ export function ProjectCard(props: ProjectCardProps) {
 
     fetcher.submit(null, {
       method: "DELETE",
-      action: `${project.id}/delete`,
+      action: `${project.id}`,
     });
   };
 

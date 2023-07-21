@@ -1,26 +1,24 @@
 import { CLIParameters } from "@/models/CLIParameters";
-import { MouseEventHandler } from "react";
-import { Link } from "react-router-dom";
-import { useFetcher } from "react-router-dom";
-import styles from "./list.module.css";
-import { Table, Tbody, Th, Thead, Tr, Td } from "@chakra-ui/react";
+import { Link as RouterLink } from "react-router-dom";
+import {
+  Table,
+  Tbody,
+  Th,
+  Thead,
+  Tr,
+  Td,
+  Box,
+  Button,
+  HStack,
+} from "@chakra-ui/react";
 type ListCLIParametersProps = {
   elements: CLIParameters[];
+  onElementRemove: (id: number) => void;
 };
 
 export default function ListCLIParameters(props: ListCLIParametersProps) {
-  const fetcher = useFetcher();
-
-  const onClickHandler: MouseEventHandler<HTMLButtonElement> = (event) => {
-    const cliParamterId = event.currentTarget.getAttribute(
-      "data-cliparameter-id"
-    );
-    const options = { encType: "application/json", method: "DELETE" } as const;
-    fetcher.submit({ id: cliParamterId }, options);
-  };
-
   return (
-    <article>
+    <Box as="article" my={8}>
       <Table variant={"simple"}>
         <Thead>
           <Tr>
@@ -36,24 +34,35 @@ export default function ListCLIParameters(props: ListCLIParametersProps) {
             return (
               <Tr key={item.id}>
                 <Td>
-                  <Link to={`cli-parameters/${item.id}/edit`}>{item.id}</Link>
+                  <RouterLink to={`cli-parameters/${item.id}/edit`}>
+                    {item.id}
+                  </RouterLink>
                 </Td>
                 <Td>{item.trackMode}</Td>
                 <Td>{item.rawFrameCopyFromLine}</Td>
                 <Td>{item.inputVideoFilename}</Td>
                 <Td>
-                  <button
-                    onClick={onClickHandler}
-                    data-cliparameter-id={item.id}
-                  >
-                    Delete
-                  </button>
+                  <HStack>
+                    <Button
+                      as={RouterLink}
+                      to={`cli-parameters/${item.id}/edit`}
+                      colorScheme="orange"
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      onClick={() => props.onElementRemove(item.id)}
+                      colorScheme="red"
+                    >
+                      Delete
+                    </Button>
+                  </HStack>
                 </Td>
               </Tr>
             );
           })}
         </Tbody>
       </Table>
-    </article>
+    </Box>
   );
 }
