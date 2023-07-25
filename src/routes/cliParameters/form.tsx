@@ -19,9 +19,7 @@ import {
   NumberDecrementStepper,
   FormErrorMessage,
   Button,
-  VStack,
   Select,
-  HStack,
   SimpleGrid,
   Heading,
   Box,
@@ -42,26 +40,41 @@ export function CLIParametersForm(
       ? "Update parameters"
       : "Create parameters";
 
+  function shouldShowFeedbackError(
+    formikProps: FormikProps<createCLIParametersInput>,
+    property: keyof createCLIParametersInput
+  ) {
+    return (
+      Boolean(formikProps.errors[property]) && formikProps.touched[property]
+    );
+  }
+
   return (
     <Box as="article">
       <Heading fontSize={"2xl"}>New parameters: </Heading>
       <Formik {...CLIParametersFormProps}>
         {(props: FormikProps<createCLIParametersInput>) => (
           <Form>
-            <FormControl isInvalid={Boolean(props.errors.firstOctaveAt)}>
+            <FormControl
+              isInvalid={shouldShowFeedbackError(props, "firstOctaveAt")}
+            >
               <FormLabel>First octave at</FormLabel>
               <Field as={ChackraInput} type="number" name="firstOctaveAt" />
 
               <ErrorMessage component={FormErrorMessage} name="firstOctaveAt" />
             </FormControl>
 
-            <FormControl isInvalid={Boolean(props.errors.octavesLength)}>
+            <FormControl
+              isInvalid={shouldShowFeedbackError(props, "octavesLength")}
+            >
               <FormLabel>Octaves length</FormLabel>
               <Field as={ChackraInput} type="number" name="octavesLength" />
               <ErrorMessage component={FormErrorMessage} name="octavesLength" />
             </FormControl>
 
-            <FormControl isInvalid={Boolean(props.errors.numberOfOctaves)}>
+            <FormControl
+              isInvalid={shouldShowFeedbackError(props, "numberOfOctaves")}
+            >
               <FormLabel>Number of octaves</FormLabel>
               <Field as={ChackraInput} type="number" name="numberOfOctaves" />
               <ErrorMessage
@@ -71,7 +84,10 @@ export function CLIParametersForm(
             </FormControl>
 
             <FormControl
-              isInvalid={Boolean(props.errors.rawFrameLinesToExtract)}
+              isInvalid={shouldShowFeedbackError(
+                props,
+                "rawFrameLinesToExtract"
+              )}
             >
               <FormLabel>Raw frame lines to extract</FormLabel>
               <Field
@@ -85,7 +101,9 @@ export function CLIParametersForm(
               />
             </FormControl>
 
-            <FormControl isInvalid={Boolean(props.errors.rawFrameCopyFromLine)}>
+            <FormControl
+              isInvalid={shouldShowFeedbackError(props, "rawFrameCopyFromLine")}
+            >
               <FormLabel>Raw frame copy from line</FormLabel>
               <Field
                 as={ChackraInput}
@@ -98,7 +116,9 @@ export function CLIParametersForm(
               />
             </FormControl>
 
-            <FormControl isInvalid={Boolean(props.errors.trackMode)}>
+            <FormControl
+              isInvalid={shouldShowFeedbackError(props, "trackMode")}
+            >
               <FormLabel> Track mode</FormLabel>
               <Field as={Select} name="trackMode">
                 <option value="FallingNotes">Falling notes</option>
@@ -106,7 +126,9 @@ export function CLIParametersForm(
               </Field>
             </FormControl>
 
-            <FormControl isInvalid={Boolean(props.errors.numberOfFramesToSkip)}>
+            <FormControl
+              isInvalid={shouldShowFeedbackError(props, "numberOfFramesToSkip")}
+            >
               <FormLabel>Number of frames to skip</FormLabel>
               <Field
                 as={ChackraInput}
@@ -120,7 +142,10 @@ export function CLIParametersForm(
             </FormControl>
 
             <FormControl
-              isInvalid={Boolean(props.errors.processFramesDivisibleBy)}
+              isInvalid={shouldShowFeedbackError(
+                props,
+                "processFramesDivisibleBy"
+              )}
             >
               <FormLabel>Process frames divisible by</FormLabel>
               <Field

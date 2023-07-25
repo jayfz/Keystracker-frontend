@@ -1,41 +1,121 @@
 import {
-  AspectRatio,
-  Box,
+  Formik,
+  Form,
+  ErrorMessage,
+  Field,
+  FormikProps,
+  FormikConfig,
+} from "formik";
+import {
+  FormControl,
+  FormLabel,
+  Input as ChackraInput,
+  FormErrorMessage,
   Button,
-  CloseButton,
-  Container,
-  Progress,
-  Text,
+  VStack,
 } from "@chakra-ui/react";
 
-export default function Playground() {
-  return (
-    <Box>
-      <CloseButton colorScheme="green" />
-      <Button isDisabled={true} colorScheme="green">
-        HILO
-      </Button>
-      <Progress size="xs" isIndeterminate colorScheme="blue" />
-      <Container maxW="container.xl" bg="blue.200" centerContent>
-        <AspectRatio ratio={16 / 9} bg={"purple.300"} w={"600px"}>
-          <Box
-            maxW={"200px"}
-            maxH={"200px"}
-            bg={"yellow.300"}
-            alignItems={"flex-end"}
-            justifyContent={"flex-start"}
-            sx={{ justifyContent: "flex-start", alignItems: "flex-end" }}
-            // style={{ justifyContent: "flex-end", alignItems: "flex-end" }}
-          >
-            <Text bg={"red.200"}>Hey darling!</Text>
+type createSomethingInput = {
+  firstName?: string | undefined;
+  lastName?: string;
+  age?: number;
+  isResponsible?: boolean;
+};
 
-            <div className="father">
-              father
-              <div className="son">son</div>
-            </div>
-          </Box>
-        </AspectRatio>
-      </Container>
-    </Box>
+type ProjectFormProps = {
+  initialValues: FormikConfig<createSomethingInput>["initialValues"];
+  onSubmit: FormikConfig<createSomethingInput>["onSubmit"];
+  validate: FormikConfig<createSomethingInput>["validate"];
+};
+
+export default function Playground() {
+  const initialValues = {
+    firstName: "",
+    // lastName: "",
+    // age: 0,
+    // isResponsible: false,
+  };
+
+  const onSubmit = async () => {
+    return 0;
+  };
+
+  const validate = () => {
+    return {};
+  };
+
+  const props = {
+    initialValues,
+    onSubmit,
+    validate,
+  };
+
+  return <ProjectForm {...props} />;
+}
+
+export function ProjectForm(projectFormProps: ProjectFormProps) {
+  const submitButtonText = "create something";
+
+  function shouldShowFeedbackError(
+    formikProps: FormikProps<createSomethingInput>,
+    property: keyof createSomethingInput
+  ) {
+    return (
+      Boolean(formikProps.errors[property]) && formikProps.touched[property]
+    );
+  }
+
+  return (
+    <Formik {...projectFormProps}>
+      {(props: FormikProps<createSomethingInput>) => (
+        <Form>
+          <VStack spacing={6} maxW={"container.lg"}>
+            {/* <FormControl
+              isInvalid={shouldShowFeedbackError(props, "firstName")}
+            >
+              <FormLabel>Name</FormLabel>
+              <Field
+                as={ChackraInput}
+                type="text"
+                name="firstName"
+                variant="filled"
+              />
+              <ErrorMessage component={FormErrorMessage} name="name" />
+            </FormControl> */}
+            {/* 
+            <FormControl isInvalid={shouldShowFeedbackError(props, "lastName")}>
+              <FormLabel>Last name</FormLabel>
+              <Field
+                as={ChackraInput}
+                type="url"
+                name="lastName"
+                variant="filled"
+              />
+              <ErrorMessage component={FormErrorMessage} name="url" />
+            </FormControl>
+
+            <FormControl>
+              <FormLabel>what</FormLabel>
+              <Field
+                as={ChackraInput}
+                type="url"
+                name="what"
+                variant="filled"
+              />
+              <ErrorMessage component={FormErrorMessage} name="url" />
+            </FormControl> */}
+
+            <Button
+              isDisabled={!props.dirty || !props.isValid}
+              isLoading={props.isSubmitting}
+              type="submit"
+              colorScheme="blue"
+            >
+              {submitButtonText}
+            </Button>
+          </VStack>
+        </Form>
+      )}
+    </Formik>
   );
 }

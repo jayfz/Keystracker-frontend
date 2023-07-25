@@ -15,7 +15,14 @@ import EditProjectPage, {
   action as EditProjectPageAction,
 } from "./projects/edit";
 import Playground from "./playground";
-import { CreateCLIParametersForm } from "./cliParameters/create";
+import {
+  CreateCLIParametersForm,
+  action as createCLIParametersAction,
+} from "./cliParameters/create";
+import {
+  EditLIParametersForm,
+  action as editCLiParametersAction,
+} from "./cliParameters/edit";
 
 export const applicationRouter = createBrowserRouter([
   {
@@ -47,9 +54,12 @@ export const applicationRouter = createBrowserRouter([
           {
             path: "cli-parameters/create",
             element: <CreateCLIParametersForm />,
+            action: createCLIParametersAction,
           },
           {
             path: "cli-parameters/:parameterId/edit",
+            element: <EditLIParametersForm />,
+            action: editCLiParametersAction,
           },
         ],
       },

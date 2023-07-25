@@ -30,12 +30,21 @@ export default function ProjectForm(projectFormProps: ProjectFormProps) {
       : "Create Project";
   const shouldDisableField = projectFormProps.formIntent === "update";
 
+  function shouldShowFeedbackError(
+    formikProps: FormikProps<createProjectInput>,
+    property: keyof createProjectInput
+  ) {
+    return (
+      Boolean(formikProps.errors[property]) && formikProps.touched[property]
+    );
+  }
+
   return (
     <Formik {...projectFormProps}>
       {(props: FormikProps<createProjectInput>) => (
         <Form>
           <VStack spacing={6} maxW={"container.lg"}>
-            <FormControl isInvalid={Boolean(props.errors.name)}>
+            <FormControl isInvalid={shouldShowFeedbackError(props, "name")}>
               <FormLabel htmlFor="name">Name</FormLabel>
               <Field
                 as={ChackraInput}
@@ -47,7 +56,7 @@ export default function ProjectForm(projectFormProps: ProjectFormProps) {
               <ErrorMessage component={FormErrorMessage} name="name" />
             </FormControl>
 
-            <FormControl isInvalid={Boolean(props.errors.url)}>
+            <FormControl isInvalid={shouldShowFeedbackError(props, "url")}>
               <FormLabel htmlFor="url">URL</FormLabel>
               <Field
                 as={ChackraInput}

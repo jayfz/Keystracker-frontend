@@ -4,7 +4,16 @@ import { CLIParameters, UpdateCLIParametersInput, createCLIParametersInput } fro
 import { deserializeRecord } from "./common";
 setAxiosDefaults(axios)
 
- async function createCLIParameters (cliParameters: createCLIParametersInput) : Promise<CLIParameters | null>{
+
+export default class CLIParametersService{
+
+    private signal: AbortSignal;
+
+    constructor(externalSignal : AbortSignal){
+        this.signal = externalSignal;
+    }
+
+ async  createCLIParameters (cliParameters: createCLIParametersInput) : Promise<CLIParameters | null>{
     try{
         const {data: {data: createdCLIParameters}} = await axios.post(`/cli-parameters`, cliParameters );
         return deserializeRecord<CLIParameters>(createdCLIParameters);
@@ -16,7 +25,7 @@ setAxiosDefaults(axios)
     return null;
 }
 
- async function updateCLIParameters(cliParameterstInput: UpdateCLIParametersInput): Promise<CLIParameters | null>{
+ async  updateCLIParameters(cliParameterstInput: UpdateCLIParametersInput): Promise<CLIParameters | null>{
     try{
         const {data: {data:updatedCLIParameters}} = await axios.patch(`/cli-parameters/${cliParameterstInput.id}`, cliParameterstInput);
         return deserializeRecord<CLIParameters>(updatedCLIParameters);
@@ -28,7 +37,7 @@ setAxiosDefaults(axios)
     return null;
 }
 
- async function deleteCLIParameters(id: number) : Promise<boolean> {
+ async  deleteCLIParameters(id: number) : Promise<boolean> {
     try {
         await axios.delete(`/cli-parameters/${id}`);
         return true;
@@ -41,10 +50,4 @@ setAxiosDefaults(axios)
     return false;
 }
 
-
-export default {
-    createCLIParameters,
-    updateCLIParameters,
-    deleteCLIParameters
 }
-
