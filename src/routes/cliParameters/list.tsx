@@ -47,6 +47,7 @@ export default function ListCLIParameters(props: ListCLIParametersProps) {
                       as={RouterLink}
                       to={`cli-parameters/${item.id}/edit`}
                       colorScheme="orange"
+                      // onClick={() => editElement.scrollIntoView();}
                     >
                       Edit
                     </Button>

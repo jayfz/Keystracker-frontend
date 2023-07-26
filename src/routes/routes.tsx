@@ -13,6 +13,7 @@ import CreateProjectPage, {
 import EditProjectPage, {
   loader as EditProjectPageLoader,
   action as EditProjectPageAction,
+  removeAction as removeParametersAction,
 } from "./projects/edit";
 import Playground from "./playground";
 import {
@@ -60,6 +61,10 @@ export const applicationRouter = createBrowserRouter([
             path: "cli-parameters/:parameterId/edit",
             element: <EditLIParametersForm />,
             action: editCLiParametersAction,
+          },
+          {
+            path: "cli-parameters/:parameterId",
+            action: removeParametersAction,
           },
         ],
       },

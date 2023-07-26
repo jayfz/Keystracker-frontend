@@ -5,12 +5,13 @@ import {
   ActionFunctionArgs,
   LoaderFunctionArgs,
   useLoaderData,
-  useLocation,
   useSubmit,
   Link as RouterLink,
   useFetcher,
   Outlet,
   useOutletContext,
+  useNavigation,
+  redirect,
 } from "react-router-dom";
 import Utils from "@/Utilities";
 
@@ -26,14 +27,15 @@ import ListCLIParameters from "../cliParameters/list";
 import { useEffect } from "react";
 import { Button, Heading, useToast } from "@chakra-ui/react";
 import useTitle from "@/hooks/useTitle";
+import { matchPath } from "react-router-dom";
+import CLIParametersService from "@/services/CLIParametersService";
 
 export default function EditProjectPage() {
+  const navigation = useNavigation();
   const submit = useSubmit();
   const fetcher = useFetcher();
   const project = useLoaderData() as ProjectWithParameters;
   const toast = useToast();
-
-  const location = useLocation();
 
   async function validate(values: createProjectInput) {
     const project = UpdateProjectInputSchema.safeParse(values);
@@ -48,7 +50,7 @@ export default function EditProjectPage() {
       {
         method: "PATCH",
         encType: "application/json",
-        state: { updated: true },
+        // state: { updated: true },
         replace: true,
       }
     );
@@ -76,37 +78,20 @@ export default function EditProjectPage() {
   useTitle("Edit project");
 
   useEffect(() => {
-    let toastRef: null | ReturnType<typeof toast> = null;
-    if (location.state?.updated) {
-      toastRef = toast({
+    const match = matchPath(
+      "/projects/:id/edit",
+      navigation.location?.pathname ?? ""
+    );
+    if (navigation.state === "loading" && match) {
+      toast({
         title: "Project updated.",
         description: "We've updated the project for you.",
         status: "success",
-        duration: 3000,
+        duration: 5000,
         isClosable: true,
       });
-
-      window.history.replaceState({ updated: false }, "");
     }
-
-    if (location.state?._isRedirect) {
-      toastRef = toast({
-        title: "Project created.",
-        description: "We've created the project for you.",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
-
-      window.history.replaceState({ _isRedirect: false }, "");
-    }
-
-    return () => {
-      if (toastRef) {
-        toast.close(toastRef);
-      }
-    };
-  }, [location, toast]);
+  }, [navigation.state, toast, navigation.location?.pathname]);
 
   return (
     <AnimatedPage animation={fadeInAnimation}>
@@ -159,4 +144,17 @@ export async function action({ params, request }: ActionFunctionArgs) {
   }
 
   throw new Error("requested action not performed");
+}
+
+export async function removeAction({ params, request }: ActionFunctionArgs) {
+  if (request.method === "DELETE") {
+    const parsedId = DatabaseIdSchema.parse({ id: params.parameterId });
+    const service = new CLIParametersService(request.signal);
+    const result = await service.deleteCLIParameters(parsedId.id);
+    if (!result) {
+      throw new Error("could not delete parameter");
+    }
+
+    return redirect("../");
+  }
 }

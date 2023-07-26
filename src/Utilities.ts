@@ -3,7 +3,6 @@ import { ZodError } from "zod";
 function getTimeAgo(date: Date) {
     const currentDate = new Date();
     const pastDate = new Date(date);
-  
     const timeDiff = currentDate.getTime() - pastDate.getTime();
     const seconds = Math.floor(timeDiff / 1000);
     const minutes = Math.floor(seconds / 60);
@@ -11,7 +10,7 @@ function getTimeAgo(date: Date) {
     const days = Math.floor(hours / 24);
     const weeks = Math.floor(days / 7);
     const years = Math.floor(days / 365);
-  
+
     if (years > 0) {
       return years === 1 ? "1 year ago" : years + " years ago";
     }
@@ -33,8 +32,8 @@ function getTimeAgo(date: Date) {
 
   function getErrorsFromZod(parsedResult: ZodError) {
     const flattenedErrors = parsedResult.flatten().fieldErrors;
-    console.log("flattenedErrors", flattenedErrors);
-  
+    // console.log("flattenedErrors", flattenedErrors);
+
     const errors: any = {};
     for (const key in flattenedErrors) {
       errors[key] =

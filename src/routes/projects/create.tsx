@@ -1,6 +1,14 @@
 import ProjectService from "@/services/ProjectService";
-import { ActionFunctionArgs, redirect, useSubmit } from "react-router-dom";
+import {
+  ActionFunctionArgs,
+  redirect,
+  useMatch,
+  useNavigation,
+  useSubmit,
+} from "react-router-dom";
 import Utils from "@/Utilities";
+
+import { matchPath } from "react-router-dom";
 
 import {
   CreateProjectInputSchema,
@@ -10,11 +18,14 @@ import {
 
 import ProjectForm from "./form";
 import AnimatedPage, { fadeInAnimation } from "@/components/AnimatedPage";
-import { Heading } from "@chakra-ui/react";
+import { Heading, useToast } from "@chakra-ui/react";
 import useTitle from "@/hooks/useTitle";
+import { useEffect } from "react";
 
 export default function CreateProjectPage() {
+  const navigation = useNavigation();
   const submit = useSubmit();
+  const toast = useToast();
 
   const initialValues = {
     name: "",
@@ -30,6 +41,8 @@ export default function CreateProjectPage() {
     const options = {
       method: "POST",
       encType: "application/json",
+      state: { created: true },
+      replace: true,
     } as const;
 
     submit({ project: values }, options);
@@ -42,6 +55,22 @@ export default function CreateProjectPage() {
   };
 
   useTitle("Create project");
+
+  useEffect(() => {
+    const result = matchPath(
+      "/projects/:id/edit",
+      navigation.location?.pathname ?? ""
+    );
+    if (navigation.state === "loading" && result) {
+      toast({
+        title: "Project created.",
+        description: "We've updated the project for you.",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  }, [navigation.state, toast, navigation.location?.pathname]);
 
   return (
     <AnimatedPage animation={fadeInAnimation}>
