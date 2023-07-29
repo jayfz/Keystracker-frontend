@@ -3,7 +3,7 @@ import { Project } from "@/models/Project";
 import Utilities from "@/Utilities";
 import { useFetcher, Link } from "react-router-dom";
 
-import { MouseEventHandler } from "react";
+import { MouseEventHandler, useEffect, useState } from "react";
 import {
   AbsoluteCenter,
   Box,
@@ -20,6 +20,7 @@ type ProjectCardProps = {
 
 export function ProjectCard(props: ProjectCardProps) {
   const project = props.project;
+  const [loading, setLoading] = useState(false);
 
   const thumbnail = {
     backgroundImage: project?.thumbnail || "",
@@ -38,9 +39,21 @@ export function ProjectCard(props: ProjectCardProps) {
     });
   };
 
+  const onLinkClicked = () => {
+    setLoading(true);
+    console.log("link clicked");
+  };
+
+  // useEffect(() => {
+  //   return () => {
+  //     setLoading(false);
+  //     console.log("unmounting");
+  //   };
+  // }, [loading]);
+
   return (
     <Box>
-      <Link to={`${project.id}/edit`}>
+      <Link to={`${project.id}/edit`} onClick={onLinkClicked}>
         <AspectRatio ratio={16 / 9}>
           <Box
             style={{ ...thumbnail, justifyContent: "flex-end" }}
@@ -50,7 +63,7 @@ export function ProjectCard(props: ProjectCardProps) {
             border={"1px"}
             borderColor={"gray.300"}
           >
-            {fetcher.state === "submitting" && (
+            {(fetcher.state === "submitting" || loading) && (
               <AbsoluteCenter>
                 <CircularProgress thickness={4} size={10} isIndeterminate />
               </AbsoluteCenter>

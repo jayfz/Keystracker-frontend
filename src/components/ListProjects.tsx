@@ -4,14 +4,21 @@ import { ProjectCard } from "@/components/ProjectCard";
 import { CreateProjectCard } from "@/components/CreateProjectCard";
 import { ListProjectsContext } from "@/context/ListProjectsContext";
 
-import { SimpleGrid } from "@chakra-ui/react";
+import { SimpleGrid, Skeleton } from "@chakra-ui/react";
+import { useAsyncValue } from "react-router-dom";
+import AnimatedPage, {
+  fadeInAnimation,
+  bringFromLeftAnimation,
+} from "./AnimatedPage";
 
-type ListProjectsProps = {
-  projects: Project[];
-};
-
-export default function ListProjects(props: ListProjectsProps) {
+// type ListProjectsProps = {
+//   projects: Project[];
+// };
+//props: ListProjectsProps
+export default function ListProjects() {
   const [refreshList, setRefreshList] = useState<boolean>(false);
+
+  const projects = useAsyncValue() as Project[];
 
   const triggerRefreshList = () => {
     setRefreshList((prev) => !prev);
@@ -20,12 +27,24 @@ export default function ListProjects(props: ListProjectsProps) {
   return (
     <ListProjectsContext.Provider value={{ triggerRefreshList }}>
       <SimpleGrid minChildWidth={"272px"} spacing={4}>
-        {props.projects.map((p) => (
+        {projects.map((p) => (
           <ProjectCard key={p.id} project={p} />
         ))}
 
         <CreateProjectCard />
       </SimpleGrid>
     </ListProjectsContext.Provider>
+  );
+}
+
+export function ListProjectsSkeleton() {
+  return (
+    <SimpleGrid minChildWidth={"272px"} spacing={4}>
+      {Array(12)
+        .fill(0)
+        .map((_, key) => (
+          <Skeleton borderRadius={"3xl"} height={"168px"} key={key} />
+        ))}
+    </SimpleGrid>
   );
 }

@@ -1,8 +1,5 @@
-import axios from 'axios'
-import { deserializeRecord, setAxiosDefaults } from './common';
+import { deserializeRecord, client as axiosClient } from './common';
 import { Project, ProjectWithParameters, UpdateProjectInput, createProjectInput } from '../models/Project';
-
-setAxiosDefaults(axios);
 
 
 export default class ProjectService{
@@ -11,14 +8,15 @@ export default class ProjectService{
 
     constructor(externalSignal : AbortSignal){
         this.signal = externalSignal;
+        
     }
 
 
     async getAllProjects (): Promise<Project[]> {
         try {
-            const {data: {data: projectCollection}} = await axios.get(`/projects`, {signal: this.signal});
-            projectCollection.forEach(deserializeRecord<Project>);
-            return projectCollection;
+            const {data: projects} = await axiosClient.get(`/projects`, {signal: this.signal});
+            projects.forEach(deserializeRecord<Project>);
+            return projects;
         } catch (error) {
             console.error(error);
             return [];
@@ -27,7 +25,7 @@ export default class ProjectService{
 
     async getProjectById (id: number): Promise<ProjectWithParameters | null>{
         try {
-            const {data:{data: project}} = await axios.get(`/projects/${id}`, {signal: this.signal});
+            const {data: project} = await axiosClient.get(`/projects/${id}`, {signal: this.signal});
             return deserializeRecord<ProjectWithParameters>(project);
 
         } catch (error) {
@@ -38,7 +36,7 @@ export default class ProjectService{
 
     async createProject (projectInput: createProjectInput) : Promise<Project | null>{
         try{
-            const {data: {data: project}} = await axios.post(`/projects`, projectInput,{signal: this.signal} );
+            const {data: project} = await axiosClient.post(`/projects`, projectInput,{signal: this.signal} );
             return deserializeRecord<Project>(project);
         }
         catch(error){
@@ -50,7 +48,7 @@ export default class ProjectService{
 
     async updateProject (projectInput: UpdateProjectInput): Promise<Project | null>{
         try{
-            const {data: {data:project}} = await axios.patch(`/projects/${projectInput.id}`, projectInput, {signal: this.signal});
+            const {data:project} = await axiosClient.patch(`/projects/${projectInput.id}`, projectInput, {signal: this.signal});
             return deserializeRecord<Project>(project);
         }
 
@@ -62,8 +60,7 @@ export default class ProjectService{
 
     async deleteProject(id: number) : Promise<boolean> {
         try {
-            await new Promise(resolve => setTimeout(resolve, 4000));
-            await axios.delete(`/projects/${id}`, {signal: this.signal});
+            await axiosClient.delete(`/projects/${id}`, {signal: this.signal});
             return true;
         }
         catch(error){

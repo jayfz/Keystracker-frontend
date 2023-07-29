@@ -46,3 +46,10 @@ function getTimeAgo(date: Date) {
     getTimeAgo,
     getErrorsFromZod
   }
+
+
+export async function sleep(miliseconds: number){
+
+    return await new Promise(resolve => setTimeout(resolve, miliseconds));
+ 
+ }
