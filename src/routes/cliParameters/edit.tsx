@@ -1,18 +1,11 @@
 import {
   ActionFunctionArgs,
-  LoaderFunctionArgs,
-  matchPath,
-  redirect,
   useActionData,
   useLocation,
-  useMatches,
-  useNavigation,
   useParams,
-  useResolvedPath,
   useSubmit,
 } from "react-router-dom";
 import {
-  CLIParameters,
   UpdateCLIParametersInputSchema,
   createCLIParametersInput,
 } from "../../models/CLIParameters";
@@ -37,7 +30,6 @@ export function EditLIParametersForm() {
   const location = useLocation();
 
   const data = useActionData();
-  console.log("useactiondata", data);
 
   useTitle(`${document.title} - Edit parameters`);
 
@@ -58,14 +50,22 @@ export function EditLIParametersForm() {
         duration: 3000,
         isClosable: true,
       });
-      // location.state.updatedParameters = false;
+    }
+
+    if (location.state?.deletedParameters) {
+      toast({
+        title: "Parameter deleted succesfully.",
+        description: "Parameter deleted succesfully for you.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
     }
   }, [location, toast]);
 
   const cliIdParsing = DatabaseIdSchema.safeParse({ id: parameterId });
 
   if (!cliIdParsing.success) {
-    console.log("CLI Id parsing errored", cliIdParsing);
     return;
   }
 
@@ -94,7 +94,6 @@ export function EditLIParametersForm() {
   );
 
   if (!parameter) {
-    console.log("no parameter found with id", parameter);
     return;
   }
 

@@ -15,6 +15,7 @@ import {
   Button,
   VStack,
 } from "@chakra-ui/react";
+import { useNavigation } from "react-router-dom";
 
 type ProjectFormProps = {
   initialValues: FormikConfig<createProjectInput>["initialValues"];
@@ -28,6 +29,11 @@ export default function ProjectForm(projectFormProps: ProjectFormProps) {
     projectFormProps.formIntent === "update"
       ? "Update Project"
       : "Create Project";
+
+  const loadingButtonText =
+    projectFormProps.formIntent === "update"
+      ? "Updating Project"
+      : "Creating Project";
   const shouldDisableField = projectFormProps.formIntent === "update";
 
   function shouldShowFeedbackError(
@@ -38,6 +44,12 @@ export default function ProjectForm(projectFormProps: ProjectFormProps) {
       Boolean(formikProps.errors[property]) && formikProps.touched[property]
     );
   }
+
+  const navigation = useNavigation();
+
+  const mutatingProject =
+    navigation.state === "submitting" &&
+    (navigation.formMethod === "POST" || navigation.formMethod === "PATCH");
 
   return (
     <Formik {...projectFormProps}>
@@ -70,7 +82,8 @@ export default function ProjectForm(projectFormProps: ProjectFormProps) {
             </FormControl>
             <Button
               isDisabled={!props.dirty || !props.isValid}
-              isLoading={props.isSubmitting}
+              isLoading={mutatingProject}
+              loadingText={loadingButtonText}
               type="submit"
               colorScheme="blue"
             >

@@ -32,7 +32,6 @@ function getTimeAgo(date: Date) {
 
   function getErrorsFromZod(parsedResult: ZodError) {
     const flattenedErrors = parsedResult.flatten().fieldErrors;
-    // console.log("flattenedErrors", flattenedErrors);
 
     const errors: any = {};
     for (const key in flattenedErrors) {

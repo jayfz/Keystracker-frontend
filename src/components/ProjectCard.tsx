@@ -41,15 +41,7 @@ export function ProjectCard(props: ProjectCardProps) {
 
   const onLinkClicked = () => {
     setLoading(true);
-    console.log("link clicked");
   };
-
-  // useEffect(() => {
-  //   return () => {
-  //     setLoading(false);
-  //     console.log("unmounting");
-  //   };
-  // }, [loading]);
 
   return (
     <Box>

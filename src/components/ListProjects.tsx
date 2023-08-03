@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { Project } from "@/models/Project";
 import { ProjectCard } from "@/components/ProjectCard";
 import { CreateProjectCard } from "@/components/CreateProjectCard";
 import { ListProjectsContext } from "@/context/ListProjectsContext";
 
-import { SimpleGrid, Skeleton } from "@chakra-ui/react";
+import { Box, SimpleGrid, Skeleton, SkeletonText } from "@chakra-ui/react";
 import { useAsyncValue } from "react-router-dom";
 import AnimatedPage, {
   fadeInAnimation,
@@ -43,7 +43,18 @@ export function ListProjectsSkeleton() {
       {Array(12)
         .fill(0)
         .map((_, key) => (
-          <Skeleton borderRadius={"3xl"} height={"168px"} key={key} />
+          <Box key={key}>
+            <Skeleton borderRadius={"3xl"} height={"168px"} />
+            <SkeletonText
+              mt="4"
+              noOfLines={2}
+              spacing="4"
+              ml={4}
+              mr={4}
+              skeletonHeight="2"
+              sx={{ "& > div": { borderRadius: "full" } }}
+            />
+          </Box>
         ))}
     </SimpleGrid>
   );

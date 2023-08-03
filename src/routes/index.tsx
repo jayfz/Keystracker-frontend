@@ -1,4 +1,9 @@
-import { Outlet, NavLink as RouterLinK, useFetchers } from "react-router-dom";
+import {
+  Outlet,
+  NavLink as RouterLinK,
+  useFetchers,
+  useNavigation,
+} from "react-router-dom";
 import {
   Container,
   Heading,
@@ -7,12 +12,42 @@ import {
   Badge,
   Flex,
   Progress,
+  Box,
 } from "@chakra-ui/react";
+import { useEffect, useRef, useState } from "react";
 
 export default function Root() {
-  const fetchers = useFetchers();
-  const eventInProgress = fetchers.some((f) => f.state !== "idle");
+  const websocketRef = useRef<WebSocket | null>(null);
 
+  const [serverMessage, setServerMessage] = useState("fully operational");
+
+  const fetchers = useFetchers();
+  const navigation = useNavigation();
+  const eventInProgress =
+    fetchers.some((f) => f.state !== "idle") || navigation.state !== "idle";
+
+  console.log(
+    "current state of websocket",
+    websocketRef.current?.readyState ?? "unknown"
+  );
+  // console.log("current state of dateref", dateRef.current.toISOString());
+
+  useEffect(() => {
+    const socket = new WebSocket(import.meta.env.VITE_WEBSOCKET_ENDPOINT_URL);
+    const settingServerMessage = (message: MessageEvent<string>) =>
+      setServerMessage(message.data);
+    socket.addEventListener("message", settingServerMessage);
+    websocketRef.current = socket;
+
+    return () => {
+      if (socket.readyState === socket.CONNECTING) {
+        socket.addEventListener("open", () => socket.close());
+        return;
+      }
+
+      socket.close();
+    };
+  }, []);
   return (
     <>
       <Progress
@@ -53,6 +88,9 @@ export default function Root() {
             </Link>
           </Flex>
         </nav>
+        <Box>
+          <Text mb={8}>Server status: {serverMessage}</Text>
+        </Box>
         <Outlet />
         <Container as="footer" mt={12}>
           <Text align={"center"}>

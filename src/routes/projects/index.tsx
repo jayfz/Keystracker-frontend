@@ -8,7 +8,7 @@ import {
 } from "react-router-dom";
 import { DatabaseIdSchema } from "@/models/common";
 import AnimatedPage, { fadeInAnimation } from "@/components/AnimatedPage";
-import { Heading, Skeleton } from "@chakra-ui/react";
+import { Heading } from "@chakra-ui/react";
 import useTitle from "@/hooks/useTitle";
 import React from "react";
 import { defer } from "react-router-dom";
@@ -37,7 +37,6 @@ export function loader({ request }: LoaderFunctionArgs) {
 }
 
 export async function action({ request, params }: ActionFunctionArgs) {
-  console.log(request, params);
   if (request.method === "DELETE" && params.projectId) {
     const { id } = DatabaseIdSchema.parse({ id: params.projectId });
     return await new ProjectService(request.signal).deleteProject(id);

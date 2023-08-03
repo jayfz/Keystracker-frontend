@@ -8,7 +8,6 @@ export default class ProjectService{
 
     constructor(externalSignal : AbortSignal){
         this.signal = externalSignal;
-        
     }
 
 

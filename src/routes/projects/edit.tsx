@@ -37,6 +37,9 @@ export default function EditProjectPage() {
   const project = useLoaderData() as ProjectWithParameters;
   const toast = useToast();
 
+  console.log("navigation", navigation);
+  console.log("fetcher", fetcher);
+
   async function validate(values: createProjectInput) {
     const project = UpdateProjectInputSchema.safeParse(values);
     return project.success ? {} : Utils.getErrorsFromZod(project.error);
@@ -50,7 +53,6 @@ export default function EditProjectPage() {
       {
         method: "PATCH",
         encType: "application/json",
-        // state: { updated: true },
         replace: true,
       }
     );
@@ -82,7 +84,7 @@ export default function EditProjectPage() {
       "/projects/:id/edit",
       navigation.location?.pathname ?? ""
     );
-    if (navigation.state === "loading" && match) {
+    if (navigation.state === "loading" && match && fetcher.state === "idle") {
       toast({
         title: "Project updated.",
         description: "We've updated the project for you.",
@@ -91,7 +93,17 @@ export default function EditProjectPage() {
         isClosable: true,
       });
     }
-  }, [navigation.state, toast, navigation.location?.pathname]);
+
+    if (fetcher.state === "loading" && fetcher.formMethod === "DELETE") {
+      toast({
+        title: "Project deleted.",
+        description: "We've deleted the project for you.",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  }, [navigation.state, toast, navigation.location?.pathname, fetcher]);
 
   return (
     <AnimatedPage animation={fadeInAnimation}>
