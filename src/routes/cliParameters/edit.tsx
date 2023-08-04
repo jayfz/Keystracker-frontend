@@ -7,15 +7,14 @@ import {
 } from "react-router-dom";
 import {
   UpdateCLIParametersInputSchema,
-  createCLIParametersInput,
+  CreateCLIParametersInput,
 } from "../../models/CLIParameters";
 import Utilities from "@/Utilities";
 
-// import { CLIParametersForm } from "./form";
 import useTitle from "@/hooks/useTitle";
 import CLIParametersService from "@/services/CLIParametersService";
 import { useProject } from "../projects/edit";
-import { DatabaseIdSchema } from "@/models/common";
+import { ZDatabaseId } from "@/models/common";
 import { useEffect, useRef } from "react";
 import { useToast } from "@chakra-ui/react";
 import CLIParametersForm from "./form";
@@ -63,13 +62,13 @@ export function EditLIParametersForm() {
     }
   }, [location, toast]);
 
-  const cliIdParsing = DatabaseIdSchema.safeParse({ id: parameterId });
+  const cliId = ZDatabaseId.safeParse(parameterId);
 
-  if (!cliIdParsing.success) {
+  if (!cliId.success) {
     return;
   }
 
-  async function onSubmit(values: createCLIParametersInput) {
+  async function onSubmit(values: CreateCLIParametersInput) {
     const cliParameters = UpdateCLIParametersInputSchema.parse(values);
     submit(
       { cliParameters },
@@ -82,16 +81,14 @@ export function EditLIParametersForm() {
     );
   }
 
-  function validate(values: createCLIParametersInput) {
+  function validate(values: CreateCLIParametersInput) {
     const parsedCLIParametersInput =
       UpdateCLIParametersInputSchema.safeParse(values);
     if (parsedCLIParametersInput.success) return {};
     return Utilities.getErrorsFromZod(parsedCLIParametersInput.error);
   }
 
-  const parameter = project.cliParameters.find(
-    (p) => p.id == cliIdParsing.data.id
-  );
+  const parameter = project.cliParameters.find((p) => p.id == cliId.data);
 
   if (!parameter) {
     return;
@@ -110,10 +107,13 @@ export function EditLIParametersForm() {
   );
 }
 
-export async function action({ request }: ActionFunctionArgs) {
+export async function action({ request, params }: ActionFunctionArgs) {
+  const id = ZDatabaseId.parse(params.parameterId);
   const { cliParameters } = await request.json();
+
   const service = new CLIParametersService(request.signal);
-  const updatedObject = await service.updateCLIParameters(cliParameters);
+
+  const updatedObject = await service.updateCLIParameters(id, cliParameters);
   if (!updatedObject) throw new Error("could not update CLI parameter");
   return updatedObject;
 }

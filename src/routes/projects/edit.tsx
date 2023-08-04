@@ -1,4 +1,4 @@
-import { DatabaseIdSchema } from "@/models/common";
+import { ZDatabaseId } from "@/models/common";
 
 import ProjectService from "@/services/ProjectService";
 import {
@@ -18,7 +18,7 @@ import Utils from "@/Utilities";
 import {
   ProjectWithParameters,
   UpdateProjectInputSchema,
-  createProjectInput,
+  CreateProjectInput,
 } from "../../models/Project";
 
 import ProjectForm from "./form";
@@ -40,12 +40,12 @@ export default function EditProjectPage() {
   console.log("navigation", navigation);
   console.log("fetcher", fetcher);
 
-  async function validate(values: createProjectInput) {
+  async function validate(values: CreateProjectInput) {
     const project = UpdateProjectInputSchema.safeParse(values);
     return project.success ? {} : Utils.getErrorsFromZod(project.error);
   }
 
-  async function onSubmit(values: createProjectInput, submitProps: any) {
+  async function onSubmit(values: CreateProjectInput, submitProps: any) {
     //TODO loadash const changedProperties = _.pickBy(afterChange, (value, key) => !_.isEqual(value, beforeChange[key]));
 
     submit(
@@ -69,7 +69,7 @@ export default function EditProjectPage() {
 
   const editProjectFormProps = {
     initialValues: {
-      id: project.id,
+      // id: project.id,
       name: project.name,
       url: project.url,
     },
@@ -130,9 +130,9 @@ export function useProject() {
 }
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
-  const record = DatabaseIdSchema.parse({ id: params.projectId });
+  const id = ZDatabaseId.parse(params.projectId);
   const service = new ProjectService(request.signal);
-  const project = await service.getProjectById(record.id);
+  const project = await service.getProjectById(id);
 
   if (!project) {
     throw new Error("project not found");
@@ -143,12 +143,12 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 
 export async function action({ params, request }: ActionFunctionArgs) {
   if (request.method === "PATCH") {
-    DatabaseIdSchema.parse({ id: params.projectId });
+    const id = ZDatabaseId.parse(params.projectId);
     const project = UpdateProjectInputSchema.parse(
       (await request.json()).project
     );
     const service = new ProjectService(request.signal);
-    const updatedProject = await service.updateProject(project);
+    const updatedProject = await service.updateProject(id, project);
 
     if (!updatedProject) throw new Error("Couldn't update project");
 
@@ -160,9 +160,9 @@ export async function action({ params, request }: ActionFunctionArgs) {
 
 export async function removeAction({ params, request }: ActionFunctionArgs) {
   if (request.method === "DELETE") {
-    const parsedId = DatabaseIdSchema.parse({ id: params.parameterId });
+    const id = ZDatabaseId.parse(params.parameterId);
     const service = new CLIParametersService(request.signal);
-    const result = await service.deleteCLIParameters(parsedId.id);
+    const result = await service.deleteCLIParameters(id);
     if (!result) {
       throw new Error("could not delete parameter");
     }

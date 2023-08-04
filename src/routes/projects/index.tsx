@@ -6,7 +6,7 @@ import {
   LoaderFunctionArgs,
   useLoaderData,
 } from "react-router-dom";
-import { DatabaseIdSchema } from "@/models/common";
+import { ZDatabaseId } from "@/models/common";
 import AnimatedPage, { fadeInAnimation } from "@/components/AnimatedPage";
 import { Heading } from "@chakra-ui/react";
 import useTitle from "@/hooks/useTitle";
@@ -32,13 +32,12 @@ export default function ProjectsPage() {
 
 export function loader({ request }: LoaderFunctionArgs) {
   const projectsPromise = new ProjectService(request.signal).getAllProjects();
-
   return defer({ projects: projectsPromise });
 }
 
 export async function action({ request, params }: ActionFunctionArgs) {
   if (request.method === "DELETE" && params.projectId) {
-    const { id } = DatabaseIdSchema.parse({ id: params.projectId });
+    const id = ZDatabaseId.parse(params.projectId);
     return await new ProjectService(request.signal).deleteProject(id);
   }
 }

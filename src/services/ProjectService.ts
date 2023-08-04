@@ -1,5 +1,5 @@
 import { deserializeRecord, client as axiosClient } from './common';
-import { Project, ProjectWithParameters, UpdateProjectInput, createProjectInput } from '../models/Project';
+import { Project, ProjectWithParameters, UpdateProjectInput, CreateProjectInput } from '../models/Project';
 
 
 export default class ProjectService{
@@ -33,7 +33,7 @@ export default class ProjectService{
         return null;
     }
 
-    async createProject (projectInput: createProjectInput) : Promise<Project | null>{
+    async createProject (projectInput: CreateProjectInput) : Promise<Project | null>{
         try{
             const {data: project} = await axiosClient.post(`/projects`, projectInput,{signal: this.signal} );
             return deserializeRecord<Project>(project);
@@ -45,9 +45,9 @@ export default class ProjectService{
         return null;
     }
 
-    async updateProject (projectInput: UpdateProjectInput): Promise<Project | null>{
+    async updateProject (id: number, projectInput: UpdateProjectInput): Promise<Project | null>{
         try{
-            const {data:project} = await axiosClient.patch(`/projects/${projectInput.id}`, projectInput, {signal: this.signal});
+            const {data:project} = await axiosClient.patch(`/projects/${id}`, projectInput, {signal: this.signal});
             return deserializeRecord<Project>(project);
         }
 

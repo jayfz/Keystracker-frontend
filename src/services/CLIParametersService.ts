@@ -1,5 +1,5 @@
 import { client as axiosClient } from "./common";
-import { CLIParameters, UpdateCLIParametersInput, createCLIParametersInput } from "../models/CLIParameters";
+import { CLIParameters, UpdateCLIParametersInput, CreateCLIParametersInput } from "../models/CLIParameters";
 import { deserializeRecord } from "./common";
 
 
@@ -11,7 +11,7 @@ export default class CLIParametersService{
         this.signal = externalSignal;
     }
 
- async  createCLIParameters (cliParameters: createCLIParametersInput) : Promise<CLIParameters | null>{
+ async  createCLIParameters (cliParameters: CreateCLIParametersInput) : Promise<CLIParameters | null>{
     try{
         const {data: createdCLIParameters} = await axiosClient.post(`/cli-parameters`, cliParameters, {signal: this.signal} );
         return deserializeRecord<CLIParameters>(createdCLIParameters);
@@ -23,9 +23,9 @@ export default class CLIParametersService{
     return null;
 }
 
- async  updateCLIParameters(cliParameterstInput: UpdateCLIParametersInput): Promise<CLIParameters | null>{
+ async  updateCLIParameters(id: number, cliParameterstInput: UpdateCLIParametersInput): Promise<CLIParameters | null>{
     try{
-        const {data:updatedCLIParameters} = await axiosClient.patch(`/cli-parameters/${cliParameterstInput.id}`, cliParameterstInput, {signal: this.signal});
+        const {data:updatedCLIParameters} = await axiosClient.patch(`/cli-parameters/${id}`, cliParameterstInput, {signal: this.signal});
         return deserializeRecord<CLIParameters>(updatedCLIParameters);
     }
 
