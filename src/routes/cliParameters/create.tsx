@@ -2,13 +2,11 @@ import {
   ActionFunctionArgs,
   matchPath,
   redirect,
-  useLoaderData,
   useNavigation,
-  useOutletContext,
   useSubmit,
 } from "react-router-dom";
 import {
-  createCLIParametersInput,
+  CreateCLIParametersInput,
   createCLIParametersInputSchema,
 } from "../../models/CLIParameters";
 import Utilities from "../../Utilities";
@@ -28,25 +26,23 @@ export function CreateCLIParametersForm() {
   const navigation = useNavigation();
   const toast = useToast();
 
-  const initialValues: createCLIParametersInput = {
+  const initialValues: CreateCLIParametersInput = {
     projectId: project.id,
-    inputVideoFilename: "input.mkv",
-    leftHandWhiteKeyColor: "#000000",
-    leftHandBlackKeyColor: "#000000",
-    rightHandWhiteKeyColor: "#000000",
-    rightHandBlackKeyColor: "#000000",
-    firstOctaveAt: 0,
-    octavesLength: 0,
-    numberOfOctaves: 0,
-    rawFrameLinesToExtract: 0,
-    rawFrameCopyFromLine: 0,
+    leftHandWhiteKeyColor: "#BC5763",
+    leftHandBlackKeyColor: "#BC5763",
+    rightHandWhiteKeyColor: "#88C356",
+    rightHandBlackKeyColor: "#5C9B2A",
+    firstOctaveAt: 50,
+    octavesLength: 1204,
+    numberOfOctaves: 7,
+    rawFrameLinesToExtract: 1,
+    rawFrameCopyFromLine: 616,
     trackMode: "Keys",
-    numberOfFramesToSkip: 0,
+    numberOfFramesToSkip: 5,
     processFramesDivisibleBy: 1,
-    outFileName: "out.mid",
   };
 
-  async function onSubmit(values: createCLIParametersInput) {
+  async function onSubmit(values: CreateCLIParametersInput) {
     const cliParameters = createCLIParametersInputSchema.parse(values);
     submit(
       { cliParameters },
@@ -61,7 +57,7 @@ export function CreateCLIParametersForm() {
     formIntent: "create" as const,
     initialValues,
     onSubmit,
-    validate(values: createCLIParametersInput) {
+    validate(values: CreateCLIParametersInput) {
       const parsedCLIParametersInput =
         createCLIParametersInputSchema.safeParse(values);
       if (parsedCLIParametersInput.success) return {};

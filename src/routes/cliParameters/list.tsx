@@ -25,7 +25,6 @@ export default function ListCLIParameters(props: ListCLIParametersProps) {
             <Th>Id</Th>
             <Th>Track Mode</Th>
             <Th>Start copy from</Th>
-            <Th>Input File name</Th>
             <Th>Actions</Th>
           </Tr>
         </Thead>
@@ -40,7 +39,6 @@ export default function ListCLIParameters(props: ListCLIParametersProps) {
                 </Td>
                 <Td>{item.trackMode}</Td>
                 <Td>{item.rawFrameCopyFromLine}</Td>
-                <Td>{item.inputVideoFilename}</Td>
                 <Td>
                   <HStack>
                     <Button

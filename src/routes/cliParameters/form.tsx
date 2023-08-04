@@ -1,4 +1,4 @@
-import { createCLIParametersInput } from "@/models/CLIParameters";
+import { CreateCLIParametersInput } from "@/models/CLIParameters";
 import {
   ErrorMessage,
   Field,
@@ -29,9 +29,9 @@ import { forwardRef } from "react";
 import { useNavigation } from "react-router-dom";
 
 export type CLIParametersFormProps = {
-  initialValues: FormikConfig<createCLIParametersInput>["initialValues"];
-  onSubmit: FormikConfig<createCLIParametersInput>["onSubmit"];
-  validate: FormikConfig<createCLIParametersInput>["validate"];
+  initialValues: FormikConfig<CreateCLIParametersInput>["initialValues"];
+  onSubmit: FormikConfig<CreateCLIParametersInput>["onSubmit"];
+  validate: FormikConfig<CreateCLIParametersInput>["validate"];
   formIntent: "update" | "create";
 };
 
@@ -57,8 +57,8 @@ const CLIParametersForm = forwardRef<HTMLElement, CLIParametersFormProps>(
         : "New parameters";
 
     function shouldShowFeedbackError(
-      formikProps: FormikProps<createCLIParametersInput>,
-      property: keyof createCLIParametersInput
+      formikProps: FormikProps<CreateCLIParametersInput>,
+      property: keyof CreateCLIParametersInput
     ) {
       return (
         Boolean(formikProps.errors[property]) && formikProps.touched[property]
@@ -69,7 +69,7 @@ const CLIParametersForm = forwardRef<HTMLElement, CLIParametersFormProps>(
       <Box as="article" ref={ref}>
         <Heading fontSize={"2xl"}>{headingText} </Heading>
         <Formik {...CLIParametersFormProps}>
-          {(props: FormikProps<createCLIParametersInput>) => (
+          {(props: FormikProps<CreateCLIParametersInput>) => (
             <Form>
               <FormControl
                 isInvalid={shouldShowFeedbackError(props, "firstOctaveAt")}
@@ -229,10 +229,13 @@ const CLIParametersForm = forwardRef<HTMLElement, CLIParametersFormProps>(
                   />
                 </FormControl>
               </SimpleGrid>
+              {(() => {
+                console.log(props);
+                return null;
+              })()}
               <Button
-                isDisabled={
-                  !props.dirty || !props.isValid || navigation.state !== "idle"
-                }
+                /*!props.dirty || */
+                isDisabled={!props.isValid || navigation.state !== "idle"}
                 isLoading={props.isSubmitting}
                 type="submit"
                 colorScheme="blue"

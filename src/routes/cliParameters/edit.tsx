@@ -69,9 +69,10 @@ export function EditLIParametersForm() {
   }
 
   async function onSubmit(values: CreateCLIParametersInput) {
-    const cliParameters = UpdateCLIParametersInputSchema.parse(values);
+    const cliParametersToUpdate =
+      UpdateCLIParametersInputSchema.strip().parse(values);
     submit(
-      { cliParameters },
+      { cliParameters: cliParametersToUpdate },
       {
         method: "PATCH",
         encType: "application/json",
@@ -83,7 +84,7 @@ export function EditLIParametersForm() {
 
   function validate(values: CreateCLIParametersInput) {
     const parsedCLIParametersInput =
-      UpdateCLIParametersInputSchema.safeParse(values);
+      UpdateCLIParametersInputSchema.strip().safeParse(values);
     if (parsedCLIParametersInput.success) return {};
     return Utilities.getErrorsFromZod(parsedCLIParametersInput.error);
   }
@@ -112,7 +113,6 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const { cliParameters } = await request.json();
 
   const service = new CLIParametersService(request.signal);
-
   const updatedObject = await service.updateCLIParameters(id, cliParameters);
   if (!updatedObject) throw new Error("could not update CLI parameter");
   return updatedObject;

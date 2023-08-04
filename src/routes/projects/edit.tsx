@@ -41,15 +41,17 @@ export default function EditProjectPage() {
   console.log("fetcher", fetcher);
 
   async function validate(values: CreateProjectInput) {
-    const project = UpdateProjectInputSchema.safeParse(values);
+    const project = UpdateProjectInputSchema.strip().safeParse(values);
     return project.success ? {} : Utils.getErrorsFromZod(project.error);
   }
 
   async function onSubmit(values: CreateProjectInput, submitProps: any) {
     //TODO loadash const changedProperties = _.pickBy(afterChange, (value, key) => !_.isEqual(value, beforeChange[key]));
 
+    const projectToUpdate = UpdateProjectInputSchema.strip().parse(values);
+
     submit(
-      { project: values },
+      { project: projectToUpdate },
       {
         method: "PATCH",
         encType: "application/json",
@@ -96,8 +98,8 @@ export default function EditProjectPage() {
 
     if (fetcher.state === "loading" && fetcher.formMethod === "DELETE") {
       toast({
-        title: "Project deleted.",
-        description: "We've deleted the project for you.",
+        title: "Cli parameter deleted.",
+        description: "We've deleted the cli parameter set for you.",
         status: "success",
         duration: 5000,
         isClosable: true,
@@ -144,9 +146,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 export async function action({ params, request }: ActionFunctionArgs) {
   if (request.method === "PATCH") {
     const id = ZDatabaseId.parse(params.projectId);
-    const project = UpdateProjectInputSchema.parse(
-      (await request.json()).project
-    );
+    const project = (await request.json()).project;
     const service = new ProjectService(request.signal);
     const updatedProject = await service.updateProject(id, project);
 
