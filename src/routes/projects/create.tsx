@@ -13,7 +13,7 @@ import { matchPath } from "react-router-dom";
 import {
   CreateProjectInputSchema,
   UpdateProjectInput,
-  createProjectInput,
+  CreateProjectInput,
 } from "@/models/Project";
 
 import ProjectForm from "./form";
@@ -32,12 +32,12 @@ export default function CreateProjectPage() {
     url: "",
   };
 
-  async function validate(values: createProjectInput | UpdateProjectInput) {
+  async function validate(values: CreateProjectInput | UpdateProjectInput) {
     const project = CreateProjectInputSchema.safeParse(values);
     return project.success ? {} : Utils.getErrorsFromZod(project.error);
   }
 
-  async function onSubmit(values: createProjectInput) {
+  async function onSubmit(values: CreateProjectInput) {
     const options = {
       method: "POST",
       encType: "application/json",

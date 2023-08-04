@@ -6,7 +6,7 @@ import {
   FormikProps,
   FormikConfig,
 } from "formik";
-import { createProjectInput } from "@/models/Project";
+import { CreateProjectInput } from "@/models/Project";
 import {
   FormControl,
   FormLabel,
@@ -18,9 +18,9 @@ import {
 import { useNavigation } from "react-router-dom";
 
 type ProjectFormProps = {
-  initialValues: FormikConfig<createProjectInput>["initialValues"];
-  onSubmit: FormikConfig<createProjectInput>["onSubmit"];
-  validate: FormikConfig<createProjectInput>["validate"];
+  initialValues: FormikConfig<CreateProjectInput>["initialValues"];
+  onSubmit: FormikConfig<CreateProjectInput>["onSubmit"];
+  validate: FormikConfig<CreateProjectInput>["validate"];
   formIntent: "update" | "create";
 };
 
@@ -37,8 +37,8 @@ export default function ProjectForm(projectFormProps: ProjectFormProps) {
   const shouldDisableField = projectFormProps.formIntent === "update";
 
   function shouldShowFeedbackError(
-    formikProps: FormikProps<createProjectInput>,
-    property: keyof createProjectInput
+    formikProps: FormikProps<CreateProjectInput>,
+    property: keyof CreateProjectInput
   ) {
     return (
       Boolean(formikProps.errors[property]) && formikProps.touched[property]
@@ -53,7 +53,7 @@ export default function ProjectForm(projectFormProps: ProjectFormProps) {
 
   return (
     <Formik {...projectFormProps}>
-      {(props: FormikProps<createProjectInput>) => (
+      {(props: FormikProps<CreateProjectInput>) => (
         <Form>
           <VStack spacing={6} maxW={"container.lg"}>
             <FormControl isInvalid={shouldShowFeedbackError(props, "name")}>
