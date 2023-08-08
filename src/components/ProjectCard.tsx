@@ -27,7 +27,7 @@ export function ProjectCard(props: ProjectCardProps) {
     project.id
   }/frame-1.jpg`;
 
-  const backgroundImage = `linear-gradient(rgba(0, 0, 255, 0.5), rgba(255, 255, 0, 0.5)), url(${image})`;
+  const backgroundImage = `radial-gradient(#e6646552, #9198e552), url(${image})`;
 
   const thumbnail = {
     backgroundImage,
