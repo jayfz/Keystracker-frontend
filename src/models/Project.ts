@@ -23,7 +23,7 @@ const ProjectSchema = DatabaseRecordSchema.merge(
 ).merge(
   z.strictObject({
     status: z.enum(["Enqueued", "Processing", "Failed", "Completed"]),
-    thumbnail: z.string().nonempty().nullable(),
+    thumbnails: z.string().array(),
   })
 );
 

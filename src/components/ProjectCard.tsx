@@ -22,9 +22,19 @@ export function ProjectCard(props: ProjectCardProps) {
   const project = props.project;
   const [loading, setLoading] = useState(false);
 
+  const thumbnailExist = project.thumbnails.includes("frame-1.jpg");
+  const image = `${import.meta.env.VITE_SERVER_ASSETS_URL}${
+    project.id
+  }/frame-1.jpg`;
+
+  const backgroundImage = `linear-gradient(rgba(0, 0, 255, 0.5), rgba(255, 255, 0, 0.5)), url(${image})`;
+
   const thumbnail = {
-    backgroundImage: project?.thumbnail || "",
+    backgroundImage,
+    backgroundSize: "cover",
   };
+
+  console.log("thumbnail: ", thumbnail);
 
   const fetcher = useFetcher();
 
@@ -46,10 +56,12 @@ export function ProjectCard(props: ProjectCardProps) {
   return (
     <Box>
       <Link to={`${project.id}/edit`} onClick={onLinkClicked}>
-        <AspectRatio ratio={16 / 9}>
+        <AspectRatio
+          ratio={16 / 9}
+          bgGradient={"linear(to-b, blue.50, orange.50)"}
+        >
           <Box
             style={{ ...thumbnail, justifyContent: "flex-end" }}
-            bgGradient={"linear(to-b, blue.50, orange.50)"}
             borderRadius={"2xl"}
             shadow={"sm"}
             border={"1px"}
