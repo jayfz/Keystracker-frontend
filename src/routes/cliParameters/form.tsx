@@ -25,8 +25,9 @@ import {
   Box,
 } from "@chakra-ui/react";
 
-import { forwardRef } from "react";
+import { createContext, forwardRef, useContext, useState } from "react";
 import { useNavigation } from "react-router-dom";
+import { PianoPositionInput } from "@/components/PianoPositionInput";
 
 export type CLIParametersFormProps = {
   initialValues: FormikConfig<CreateCLIParametersInput>["initialValues"];
@@ -35,9 +36,32 @@ export type CLIParametersFormProps = {
   formIntent: "update" | "create";
 };
 
+type DetailInputContextType = {
+  displayDetailInput: string;
+  setDisplayDetailInput: React.Dispatch<
+    React.SetStateAction<keyof CreateCLIParametersInput | "">
+  >;
+};
+
+const DetailInputContext = createContext<DetailInputContextType | null>(null);
+
+export const useDetailInputContext = () => {
+  const context = useContext(DetailInputContext);
+  if (!context) {
+    throw new Error(
+      "useListProjectsContext has to be used within <DetailInputContext.Provider>"
+    );
+  }
+
+  return context;
+};
+
 const CLIParametersForm = forwardRef<HTMLElement, CLIParametersFormProps>(
   function CLIParametersForm(CLIParametersFormProps, ref) {
     const navigation = useNavigation();
+    const [displayDetailInput, setDisplayDetailInput] = useState<
+      keyof CreateCLIParametersInput | ""
+    >("");
 
     let submitButtonText =
       CLIParametersFormProps.formIntent === "update"
@@ -66,186 +90,222 @@ const CLIParametersForm = forwardRef<HTMLElement, CLIParametersFormProps>(
     }
 
     return (
-      <Box as="article" ref={ref}>
-        <Heading fontSize={"2xl"}>{headingText} </Heading>
-        <Formik {...CLIParametersFormProps}>
-          {(props: FormikProps<CreateCLIParametersInput>) => (
-            <Form>
-              <FormControl
+      <DetailInputContext.Provider
+        value={{ displayDetailInput, setDisplayDetailInput }}
+      >
+        <Box as="article" ref={ref}>
+          <Heading fontSize={"2xl"}>{headingText} </Heading>
+          <Formik {...CLIParametersFormProps}>
+            {(props: FormikProps<CreateCLIParametersInput>) => (
+              <Form>
+                <PianoPositionInput
+                  name="firstOctaveAt"
+                  variant="x"
+                  imgURL="http://localhost:8000/public/7/frame-1285.jpg"
+                  label="First Octave At"
+                />
+                {/* <FormControl
                 isInvalid={shouldShowFeedbackError(props, "firstOctaveAt")}
               >
                 <FormLabel>First octave at</FormLabel>
-                <Field as={ChackraInput} type="number" name="firstOctaveAt" />
+                <Field
+                  as={ChackraInput}
+                  type="number"
+                  name="firstOctaveAt"
+                  onFocus={() => console.log("hey ya")}
+                />
+
+                
 
                 <ErrorMessage
                   component={FormErrorMessage}
                   name="firstOctaveAt"
                 />
-              </FormControl>
+              </FormControl> */}
 
-              <FormControl
-                isInvalid={shouldShowFeedbackError(props, "octavesLength")}
-              >
-                <FormLabel>Octaves length</FormLabel>
-                <Field as={ChackraInput} type="number" name="octavesLength" />
-                <ErrorMessage
-                  component={FormErrorMessage}
+                <PianoPositionInput
                   name="octavesLength"
+                  variant="x"
+                  imgURL="http://localhost:8000/public/7/frame-1285.jpg"
+                  label="Octaves length"
                 />
-              </FormControl>
 
-              <FormControl
-                isInvalid={shouldShowFeedbackError(props, "numberOfOctaves")}
-              >
-                <FormLabel>Number of octaves</FormLabel>
-                <Field as={ChackraInput} type="number" name="numberOfOctaves" />
-                <ErrorMessage
-                  component={FormErrorMessage}
-                  name="numberOfOctaves"
-                />
-              </FormControl>
+                {/* <FormControl
+                  isInvalid={shouldShowFeedbackError(props, "octavesLength")}
+                >
+                  <FormLabel>Octaves length</FormLabel>
+                  <Field as={ChackraInput} type="number" name="octavesLength" />
+                  <ErrorMessage
+                    component={FormErrorMessage}
+                    name="octavesLength"
+                  />
+                </FormControl> */}
 
-              <FormControl
-                isInvalid={shouldShowFeedbackError(
-                  props,
-                  "rawFrameLinesToExtract"
-                )}
-              >
-                <FormLabel>Raw frame lines to extract</FormLabel>
-                <Field
-                  as={ChackraInput}
-                  type="number"
-                  name="rawFrameLinesToExtract"
-                />
-                <ErrorMessage
-                  component={FormErrorMessage}
-                  name="rawFrameLinesToExtract"
-                />
-              </FormControl>
+                <FormControl
+                  isInvalid={shouldShowFeedbackError(props, "numberOfOctaves")}
+                >
+                  <FormLabel>Number of octaves</FormLabel>
+                  <Field
+                    as={ChackraInput}
+                    type="number"
+                    name="numberOfOctaves"
+                  />
+                  <ErrorMessage
+                    component={FormErrorMessage}
+                    name="numberOfOctaves"
+                  />
+                </FormControl>
 
-              <FormControl
-                isInvalid={shouldShowFeedbackError(
-                  props,
-                  "rawFrameCopyFromLine"
-                )}
-              >
-                <FormLabel>Raw frame copy from line</FormLabel>
-                <Field
-                  as={ChackraInput}
-                  type="number"
+                <FormControl
+                  isInvalid={shouldShowFeedbackError(props, "trackMode")}
+                >
+                  <FormLabel> Track mode</FormLabel>
+                  <Field as={Select} name="trackMode">
+                    <option value="FallingNotes">Falling notes</option>
+                    <option value="Keys">Keys</option>
+                  </Field>
+                </FormControl>
+
+                <FormControl
+                  isInvalid={shouldShowFeedbackError(
+                    props,
+                    "rawFrameLinesToExtract"
+                  )}
+                >
+                  <FormLabel>Raw frame lines to extract</FormLabel>
+                  <Field
+                    as={ChackraInput}
+                    type="number"
+                    name="rawFrameLinesToExtract"
+                  />
+                  <ErrorMessage
+                    component={FormErrorMessage}
+                    name="rawFrameLinesToExtract"
+                  />
+                </FormControl>
+
+                <PianoPositionInput
                   name="rawFrameCopyFromLine"
+                  variant="y"
+                  imgURL="http://localhost:8000/public/7/frame-1285.jpg"
+                  label="Raw frame copy from line"
                 />
-                <ErrorMessage
-                  component={FormErrorMessage}
-                  name="rawFrameCopyFromLine"
-                />
-              </FormControl>
 
-              <FormControl
-                isInvalid={shouldShowFeedbackError(props, "trackMode")}
-              >
-                <FormLabel> Track mode</FormLabel>
-                <Field as={Select} name="trackMode">
-                  <option value="FallingNotes">Falling notes</option>
-                  <option value="Keys">Keys</option>
-                </Field>
-              </FormControl>
-
-              <FormControl
-                isInvalid={shouldShowFeedbackError(
-                  props,
-                  "numberOfFramesToSkip"
-                )}
-              >
-                <FormLabel>Number of frames to skip</FormLabel>
-                <Field
-                  as={ChackraInput}
-                  type="number"
-                  name="numberOfFramesToSkip"
-                />
-                <ErrorMessage
-                  component={FormErrorMessage}
-                  name="numberOfFramesToSkip"
-                />
-              </FormControl>
-
-              <FormControl
-                isInvalid={shouldShowFeedbackError(
-                  props,
-                  "processFramesDivisibleBy"
-                )}
-              >
-                <FormLabel>Process frames divisible by</FormLabel>
-                <Field
-                  as={ChackraInput}
-                  type="number"
-                  name="processFramesDivisibleBy"
-                />
-                <ErrorMessage
-                  component={FormErrorMessage}
-                  name="processFramesDivisibleBy"
-                />
-              </FormControl>
-              <SimpleGrid columns={[1, 2]}>
-                <FormControl>
-                  <FormLabel textAlign={"center"}>
-                    Left hand white key color
-                  </FormLabel>
+                {/* <FormControl
+                  isInvalid={shouldShowFeedbackError(
+                    props,
+                    "rawFrameCopyFromLine"
+                  )}
+                >
+                  <FormLabel>Raw frame copy from line</FormLabel>
                   <Field
                     as={ChackraInput}
-                    type="color"
-                    name="leftHandWhiteKeyColor"
+                    type="number"
+                    name="rawFrameCopyFromLine"
                   />
-                </FormControl>
-                <FormControl>
-                  <FormLabel textAlign={"center"}>
-                    Left hand black key color
-                  </FormLabel>
+                  <ErrorMessage
+                    component={FormErrorMessage}
+                    name="rawFrameCopyFromLine"
+                  />
+                </FormControl> */}
+
+                <FormControl
+                  isInvalid={shouldShowFeedbackError(
+                    props,
+                    "numberOfFramesToSkip"
+                  )}
+                >
+                  <FormLabel>Number of frames to skip</FormLabel>
                   <Field
                     as={ChackraInput}
-                    type="color"
-                    name="leftHandBlackKeyColor"
+                    type="number"
+                    name="numberOfFramesToSkip"
+                  />
+                  <ErrorMessage
+                    component={FormErrorMessage}
+                    name="numberOfFramesToSkip"
                   />
                 </FormControl>
 
-                <FormControl>
-                  <FormLabel textAlign={"center"}>
-                    Right hand white key color
-                  </FormLabel>
+                <FormControl
+                  isInvalid={shouldShowFeedbackError(
+                    props,
+                    "processFramesDivisibleBy"
+                  )}
+                >
+                  <FormLabel>Process frames divisible by</FormLabel>
                   <Field
                     as={ChackraInput}
-                    type="color"
-                    name="rightHandWhiteKeyColor"
+                    type="number"
+                    name="processFramesDivisibleBy"
+                  />
+                  <ErrorMessage
+                    component={FormErrorMessage}
+                    name="processFramesDivisibleBy"
                   />
                 </FormControl>
-                <FormControl>
-                  <FormLabel textAlign={"center"}>
-                    Right hand black key color
-                  </FormLabel>
-                  <Field
-                    as={ChackraInput}
-                    type="color"
-                    name="rightHandBlackKeyColor"
-                  />
-                </FormControl>
-              </SimpleGrid>
-              {(() => {
+                <SimpleGrid columns={[1, 2]}>
+                  <FormControl>
+                    <FormLabel textAlign={"center"}>
+                      Left hand white key color
+                    </FormLabel>
+                    <Field
+                      as={ChackraInput}
+                      type="color"
+                      name="leftHandWhiteKeyColor"
+                    />
+                  </FormControl>
+                  <FormControl>
+                    <FormLabel textAlign={"center"}>
+                      Left hand black key color
+                    </FormLabel>
+                    <Field
+                      as={ChackraInput}
+                      type="color"
+                      name="leftHandBlackKeyColor"
+                    />
+                  </FormControl>
+
+                  <FormControl>
+                    <FormLabel textAlign={"center"}>
+                      Right hand white key color
+                    </FormLabel>
+                    <Field
+                      as={ChackraInput}
+                      type="color"
+                      name="rightHandWhiteKeyColor"
+                    />
+                  </FormControl>
+                  <FormControl>
+                    <FormLabel textAlign={"center"}>
+                      Right hand black key color
+                    </FormLabel>
+                    <Field
+                      as={ChackraInput}
+                      type="color"
+                      name="rightHandBlackKeyColor"
+                    />
+                  </FormControl>
+                </SimpleGrid>
+                {/* {(() => {
                 console.log(props);
+                props.setValues(")
                 return null;
-              })()}
-              <Button
-                /*!props.dirty || */
-                isDisabled={!props.isValid || navigation.state !== "idle"}
-                isLoading={props.isSubmitting}
-                type="submit"
-                colorScheme="blue"
-              >
-                {submitButtonText}
-              </Button>
-            </Form>
-          )}
-        </Formik>
-      </Box>
+              })()} */}
+                <Button
+                  /*!props.dirty || */
+                  isDisabled={!props.isValid || navigation.state !== "idle"}
+                  isLoading={props.isSubmitting}
+                  type="submit"
+                  colorScheme="blue"
+                >
+                  {submitButtonText}
+                </Button>
+              </Form>
+            )}
+          </Formik>
+        </Box>
+      </DetailInputContext.Provider>
     );
   }
 );

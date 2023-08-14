@@ -1,4 +1,4 @@
-import { HStack, Text, Box, VStack, SimpleGrid } from "@chakra-ui/react";
+import { HStack, Text, Box, VStack, SimpleGrid, Flex } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 
 export default function Playground() {
@@ -213,6 +213,9 @@ type PianoKeysColorInputProps = {
 export function PianoKeysColorInput(props: PianoKeysColorInputProps) {
   const sourceCanvasRef = useRef<HTMLCanvasElement>(null);
   const colorCanvasRef = useRef<HTMLCanvasElement>(null);
+  const averageColorRef = useRef<HTMLDivElement>(null);
+  const averageColorValueRef = useRef("#000000");
+  const [averageColorUI, setaverageColorUI] = useState("");
 
   useEffect(() => {
     const sourceCanvas = sourceCanvasRef.current;
@@ -239,23 +242,24 @@ export function PianoKeysColorInput(props: PianoKeysColorInputProps) {
     };
 
     const img = fetchImage(props.imgURL);
-
     img.addEventListener("load", onImageLoad);
 
     const onCanvasMouseOver = (event: MouseEvent) => {
       const x = event.offsetX;
       const y = event.offsetY;
-      const originalImagePosition = renderZoomedCanvasAtPositionColor(
-        colorCanvas2DContext,
-        x,
-        y,
-        sourceCanvas
-      );
-      // pixelRef.current = originalImagePosition;
+      averageColorValueRef.current =
+        renderZoomedCanvasAtPositionColor(
+          colorCanvas2DContext,
+          x,
+          y,
+          sourceCanvas
+        ) ?? "#000000";
+
+      setaverageColorUI(averageColorValueRef.current);
     };
 
     const onCanvasClick = (event: MouseEvent) => {
-      // setPixelValue(pixelRef.current);
+      // setExternalSetter(averageColorValueRef.current);
     };
 
     const draw = (img: HTMLImageElement) => {
@@ -269,16 +273,17 @@ export function PianoKeysColorInput(props: PianoKeysColorInputProps) {
       sourceCanvas.removeEventListener("click", onCanvasClick);
       img.removeEventListener("load", onImageLoad);
     };
-  }, []);
+  }, [props.imgURL]);
 
   return (
     <VStack>
+      <canvas
+        style={{ backgroundColor: "lightblue" }}
+        ref={sourceCanvasRef}
+        id="canvas"
+      ></canvas>
+
       <HStack>
-        <canvas
-          style={{ backgroundColor: "lightblue" }}
-          ref={sourceCanvasRef}
-          id="canvas"
-        ></canvas>
         <canvas
           style={{ backgroundColor: "lightblue" }}
           height={200}
@@ -286,8 +291,31 @@ export function PianoKeysColorInput(props: PianoKeysColorInputProps) {
           ref={colorCanvasRef}
           id="pixelated-zoom"
         ></canvas>
+
+        <Flex
+          ref={averageColorRef}
+          width={"200px"}
+          height={"200px"}
+          id="average-color"
+          justifyContent={"center"}
+          alignItems={"center"}
+        >
+          <Text
+            fontSize={"small"}
+            padding={2}
+            fontWeight={"bold"}
+            color={"gray.600"}
+            backgroundColor={"white"}
+            borderRadius={"full"}
+            fontFamily={"monospace"}
+            letterSpacing={"0.1rem"}
+            textTransform={"uppercase"}
+          >
+            {averageColorUI}
+          </Text>
+        </Flex>
       </HStack>
-      <HStack>
+      <VStack>
         <SimpleGrid columns={4}>
           {Array(16)
             .fill(0)
@@ -295,7 +323,7 @@ export function PianoKeysColorInput(props: PianoKeysColorInputProps) {
               <div key={index} id={`c${index}`} className="nodes"></div>
             ))}
         </SimpleGrid>
-      </HStack>
+      </VStack>
     </VStack>
   );
 }
@@ -316,7 +344,9 @@ function renderZoomedCanvasAtPositionColor(
   const fixedSx = Math.min(sx, displayedImageWidth - magnifyingAreaLength);
   const fixedSy = Math.min(sy, displayedImageHeight - magnifyingAreaLength);
 
-  const sourceContext = sourceCanvasImage.getContext("2d");
+  const sourceContext = sourceCanvasImage.getContext("2d", {
+    willReadFrequently: true,
+  });
   if (!sourceContext) return;
 
   const imageData = sourceContext.getImageData(
@@ -338,38 +368,22 @@ function renderZoomedCanvasAtPositionColor(
     });
   }
 
+  const averageColorDiv =
+    document.querySelector<HTMLDivElement>("#average-color");
+
   for (const div of document.querySelectorAll<HTMLDivElement>(".nodes")) {
     const colorIndex = parseInt(div.id.split("c")[1]);
-    const color = `#${colorArray[colorIndex].r.toString(16)}${colorArray[
-      colorIndex
-    ].g.toString(16)}${colorArray[colorIndex].b.toString(16)}${colorArray[
-      colorIndex
-    ].a.toString(16)}`;
-    div.style.backgroundColor = color;
-    div.innerText = color;
+    const color = colorArray[colorIndex];
+    const colorHex = colorToHexadecimal(color);
+    div.style.backgroundColor = colorHex;
+    div.innerText = colorHex;
     div.style.padding = "50px";
   }
 
-  // const dimension = {
-  //   imageAxisLength: 0,
-  //   imageAxisPosition: 0,
-  //   fixedImageAxisPosition: 0,
-  //   drawLineFunction: drawVerticalLine,
-  // };
-
-  // if (axis === "x") {
-  //   dimension.imageAxisLength = displayedImageWidth;
-  //   dimension.imageAxisPosition = sx;
-  //   dimension.fixedImageAxisPosition = fixedSx;
-  //   dimension.drawLineFunction = drawVerticalLine;
-  // }
-
-  // if (axis === "y") {
-  //   dimension.imageAxisLength = displayedImageHeight;
-  //   dimension.imageAxisPosition = sy;
-  //   dimension.fixedImageAxisPosition = fixedSy;
-  //   dimension.drawLineFunction = drawHorizontalLine;
-  // }
+  const averageColorHex = colorToHexadecimal(averageColor(colorArray));
+  if (averageColorDiv) {
+    averageColorDiv.style.backgroundColor = averageColorHex;
+  }
 
   pixelatedContext.drawImage(
     sourceCanvasImage,
@@ -383,21 +397,39 @@ function renderZoomedCanvasAtPositionColor(
     outputCanvasAreaLength
   );
 
-  // const lineStart =
-  //   outputCanvasAreaLength *
-  //   (dimension.imageAxisPosition / dimension.imageAxisLength);
+  return averageColorHex;
+}
 
-  // dimension.drawLineFunction(
-  //   pixelatedContext,
-  //   lineStart,
-  //   outputCanvasAreaLength
-  // );
+type Color = {
+  r: number;
+  g: number;
+  b: number;
+  a: number;
+};
 
-  // const actualLine =
-  //   dimension.fixedImageAxisPosition +
-  //   magnifyingAreaLength *
-  //     (dimension.imageAxisPosition / dimension.imageAxisLength);
+function colorToHexadecimal(color: Color) {
+  return `#${color.r.toString(16)}${color.g.toString(16)}${color.b.toString(
+    16
+  )}`;
+}
 
-  // return Math.ceil(actualLine) * 2;
-  return 0;
+function averageColor(colors: Color[]) {
+  const average: Color = {
+    r: 0,
+    g: 0,
+    b: 0,
+    a: 0,
+  };
+  for (const color of colors) {
+    average.r += color.r;
+    average.g += color.g;
+    average.b += color.b;
+  }
+
+  return {
+    r: Math.floor(average.r / colors.length),
+    g: Math.floor(average.g / colors.length),
+    b: Math.floor(average.b / colors.length),
+    a: 0,
+  };
 }
