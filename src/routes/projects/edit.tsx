@@ -37,9 +37,6 @@ export default function EditProjectPage() {
   const project = useLoaderData() as ProjectWithParameters;
   const toast = useToast();
 
-  console.log("navigation", navigation);
-  console.log("fetcher", fetcher);
-
   async function validate(values: CreateProjectInput) {
     const project = UpdateProjectInputSchema.strip().safeParse(values);
     return project.success ? {} : Utils.getErrorsFromZod(project.error);

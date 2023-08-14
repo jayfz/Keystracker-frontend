@@ -1,16 +1,15 @@
+import { fetchImage } from "@/Utilities";
 import { CreateCLIParametersInput } from "@/models/CLIParameters";
 import { useDetailInputContext } from "@/routes/cliParameters/form";
 import {
   HStack,
-  Box,
-  Text,
   FormControl,
   FormLabel,
   FormErrorMessage,
   Input,
 } from "@chakra-ui/react";
-import { ErrorMessage, Field, FieldHookConfig, useField } from "formik";
-import { useEffect, useRef, useState } from "react";
+import { FieldHookConfig, useField } from "formik";
+import { useEffect, useRef } from "react";
 
 interface PianoPositionInputProps {
   imgURL: string;
@@ -104,6 +103,8 @@ export function PianoPositionInput({
     const input = inputRef.current;
     if (!input) return;
     if (value === 50) return; //should actually be 0
+    if (value === 1204) return; //should actually be 0
+    if (value === 616) return; //should actually be 0
 
     input.animate(
       [
@@ -242,14 +243,6 @@ function renderZoomedCanvasAtPosition(
       (dimension.imageAxisPosition / dimension.imageAxisLength);
 
   return Math.ceil(actualLine) * 2;
-}
-
-function fetchImage(url: string) {
-  const img = new Image();
-  img.addEventListener("error", () => console.log("error loading image"));
-  img.crossOrigin = "anonymous";
-  img.src = url;
-  return img;
 }
 
 function drawVerticalLine(

@@ -23,11 +23,13 @@ import {
   SimpleGrid,
   Heading,
   Box,
+  VStack,
 } from "@chakra-ui/react";
 
 import { createContext, forwardRef, useContext, useState } from "react";
 import { useNavigation } from "react-router-dom";
 import { PianoPositionInput } from "@/components/PianoPositionInput";
+import { PianoKeysColorInput } from "@/components/PianoKeysColorInput";
 
 export type CLIParametersFormProps = {
   initialValues: FormikConfig<CreateCLIParametersInput>["initialValues"];
@@ -44,6 +46,7 @@ type DetailInputContextType = {
 };
 
 const DetailInputContext = createContext<DetailInputContextType | null>(null);
+DetailInputContext.displayName = "DetailInputContext";
 
 export const useDetailInputContext = () => {
   const context = useContext(DetailInputContext);
@@ -244,8 +247,8 @@ const CLIParametersForm = forwardRef<HTMLElement, CLIParametersFormProps>(
                     name="processFramesDivisibleBy"
                   />
                 </FormControl>
-                <SimpleGrid columns={[1, 2]}>
-                  <FormControl>
+                <VStack>
+                  {/* <FormControl>
                     <FormLabel textAlign={"center"}>
                       Left hand white key color
                     </FormLabel>
@@ -285,8 +288,29 @@ const CLIParametersForm = forwardRef<HTMLElement, CLIParametersFormProps>(
                       type="color"
                       name="rightHandBlackKeyColor"
                     />
-                  </FormControl>
-                </SimpleGrid>
+                  </FormControl> */}
+
+                  <PianoKeysColorInput
+                    label="Left hand white key color"
+                    name="leftHandWhiteKeyColor"
+                    imgURL="http://localhost:8000/public/7/frame-1285.jpg"
+                  />
+                  <PianoKeysColorInput
+                    label="Left hand black key color"
+                    name="leftHandBlackKeyColor"
+                    imgURL="http://localhost:8000/public/7/frame-1285.jpg"
+                  />
+                  <PianoKeysColorInput
+                    label="Right hand white key color"
+                    name="rightHandWhiteKeyColor"
+                    imgURL="http://localhost:8000/public/7/frame-1285.jpg"
+                  />
+                  <PianoKeysColorInput
+                    label="Right hand black key color"
+                    name="rightHandBlackKeyColor"
+                    imgURL="http://localhost:8000/public/7/frame-1285.jpg"
+                  />
+                </VStack>
                 {/* {(() => {
                 console.log(props);
                 props.setValues(")
