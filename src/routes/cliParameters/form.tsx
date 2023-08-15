@@ -1,4 +1,7 @@
-import { CreateCLIParametersInput } from "@/models/CLIParameters";
+import {
+  CreateCLIParametersInput,
+  CreateCLIParametersInputForm,
+} from "@/models/CLIParameters";
 import {
   ErrorMessage,
   Field,
@@ -30,18 +33,20 @@ import { createContext, forwardRef, useContext, useState } from "react";
 import { useNavigation } from "react-router-dom";
 import { PianoPositionInput } from "@/components/PianoPositionInput";
 import { PianoKeysColorInput } from "@/components/PianoKeysColorInput";
+import { useProject } from "../projects/edit";
+import { OctavesLengthInput } from "@/components/OctavesLengthInput";
 
 export type CLIParametersFormProps = {
-  initialValues: FormikConfig<CreateCLIParametersInput>["initialValues"];
-  onSubmit: FormikConfig<CreateCLIParametersInput>["onSubmit"];
-  validate: FormikConfig<CreateCLIParametersInput>["validate"];
+  initialValues: FormikConfig<CreateCLIParametersInputForm>["initialValues"];
+  onSubmit: FormikConfig<CreateCLIParametersInputForm>["onSubmit"];
+  validate: FormikConfig<CreateCLIParametersInputForm>["validate"];
   formIntent: "update" | "create";
 };
 
 type DetailInputContextType = {
   displayDetailInput: string;
   setDisplayDetailInput: React.Dispatch<
-    React.SetStateAction<keyof CreateCLIParametersInput | "">
+    React.SetStateAction<keyof CreateCLIParametersInputForm | "">
   >;
 };
 
@@ -63,8 +68,14 @@ const CLIParametersForm = forwardRef<HTMLElement, CLIParametersFormProps>(
   function CLIParametersForm(CLIParametersFormProps, ref) {
     const navigation = useNavigation();
     const [displayDetailInput, setDisplayDetailInput] = useState<
-      keyof CreateCLIParametersInput | ""
+      keyof CreateCLIParametersInputForm | ""
     >("");
+
+    const project = useProject();
+
+    const thumbnails = project.thumbnails.map((thumbnail) => {
+      return `http://localhost:8000/public/${project.id}/${thumbnail}`;
+    });
 
     let submitButtonText =
       CLIParametersFormProps.formIntent === "update"
@@ -84,8 +95,8 @@ const CLIParametersForm = forwardRef<HTMLElement, CLIParametersFormProps>(
         : "New parameters";
 
     function shouldShowFeedbackError(
-      formikProps: FormikProps<CreateCLIParametersInput>,
-      property: keyof CreateCLIParametersInput
+      formikProps: FormikProps<CreateCLIParametersInputForm>,
+      property: keyof CreateCLIParametersInputForm
     ) {
       return (
         Boolean(formikProps.errors[property]) && formikProps.touched[property]
@@ -99,50 +110,26 @@ const CLIParametersForm = forwardRef<HTMLElement, CLIParametersFormProps>(
         <Box as="article" ref={ref}>
           <Heading fontSize={"2xl"}>{headingText} </Heading>
           <Formik {...CLIParametersFormProps}>
-            {(props: FormikProps<CreateCLIParametersInput>) => (
+            {(props: FormikProps<CreateCLIParametersInputForm>) => (
               <Form>
                 <PianoPositionInput
                   name="firstOctaveAt"
                   variant="x"
-                  imgURL="http://localhost:8000/public/7/frame-1285.jpg"
+                  imgURL={thumbnails[0]}
                   label="First Octave At"
                 />
-                {/* <FormControl
-                isInvalid={shouldShowFeedbackError(props, "firstOctaveAt")}
-              >
-                <FormLabel>First octave at</FormLabel>
-                <Field
-                  as={ChackraInput}
-                  type="number"
-                  name="firstOctaveAt"
-                  onFocus={() => console.log("hey ya")}
-                />
-
-                
-
-                <ErrorMessage
-                  component={FormErrorMessage}
-                  name="firstOctaveAt"
-                />
-              </FormControl> */}
 
                 <PianoPositionInput
-                  name="octavesLength"
+                  name="lastOctaveAt"
                   variant="x"
-                  imgURL="http://localhost:8000/public/7/frame-1285.jpg"
-                  label="Octaves length"
+                  imgURL={thumbnails[0]}
+                  label="Last Octave at"
                 />
 
-                {/* <FormControl
-                  isInvalid={shouldShowFeedbackError(props, "octavesLength")}
-                >
-                  <FormLabel>Octaves length</FormLabel>
-                  <Field as={ChackraInput} type="number" name="octavesLength" />
-                  <ErrorMessage
-                    component={FormErrorMessage}
-                    name="octavesLength"
-                  />
-                </FormControl> */}
+                <OctavesLengthInput
+                  name="octavesLength"
+                  label="Octaves length"
+                />
 
                 <FormControl
                   isInvalid={shouldShowFeedbackError(props, "numberOfOctaves")}
@@ -190,27 +177,9 @@ const CLIParametersForm = forwardRef<HTMLElement, CLIParametersFormProps>(
                 <PianoPositionInput
                   name="rawFrameCopyFromLine"
                   variant="y"
-                  imgURL="http://localhost:8000/public/7/frame-1285.jpg"
+                  imgURL={thumbnails[0]}
                   label="Raw frame copy from line"
                 />
-
-                {/* <FormControl
-                  isInvalid={shouldShowFeedbackError(
-                    props,
-                    "rawFrameCopyFromLine"
-                  )}
-                >
-                  <FormLabel>Raw frame copy from line</FormLabel>
-                  <Field
-                    as={ChackraInput}
-                    type="number"
-                    name="rawFrameCopyFromLine"
-                  />
-                  <ErrorMessage
-                    component={FormErrorMessage}
-                    name="rawFrameCopyFromLine"
-                  />
-                </FormControl> */}
 
                 <FormControl
                   isInvalid={shouldShowFeedbackError(
@@ -248,76 +217,29 @@ const CLIParametersForm = forwardRef<HTMLElement, CLIParametersFormProps>(
                   />
                 </FormControl>
                 <VStack>
-                  {/* <FormControl>
-                    <FormLabel textAlign={"center"}>
-                      Left hand white key color
-                    </FormLabel>
-                    <Field
-                      as={ChackraInput}
-                      type="color"
-                      name="leftHandWhiteKeyColor"
-                    />
-                  </FormControl>
-                  <FormControl>
-                    <FormLabel textAlign={"center"}>
-                      Left hand black key color
-                    </FormLabel>
-                    <Field
-                      as={ChackraInput}
-                      type="color"
-                      name="leftHandBlackKeyColor"
-                    />
-                  </FormControl>
-
-                  <FormControl>
-                    <FormLabel textAlign={"center"}>
-                      Right hand white key color
-                    </FormLabel>
-                    <Field
-                      as={ChackraInput}
-                      type="color"
-                      name="rightHandWhiteKeyColor"
-                    />
-                  </FormControl>
-                  <FormControl>
-                    <FormLabel textAlign={"center"}>
-                      Right hand black key color
-                    </FormLabel>
-                    <Field
-                      as={ChackraInput}
-                      type="color"
-                      name="rightHandBlackKeyColor"
-                    />
-                  </FormControl> */}
-
                   <PianoKeysColorInput
                     label="Left hand white key color"
                     name="leftHandWhiteKeyColor"
-                    imgURL="http://localhost:8000/public/7/frame-1285.jpg"
+                    imgURL={thumbnails}
                   />
                   <PianoKeysColorInput
                     label="Left hand black key color"
                     name="leftHandBlackKeyColor"
-                    imgURL="http://localhost:8000/public/7/frame-1285.jpg"
+                    imgURL={thumbnails}
                   />
                   <PianoKeysColorInput
                     label="Right hand white key color"
                     name="rightHandWhiteKeyColor"
-                    imgURL="http://localhost:8000/public/7/frame-1285.jpg"
+                    imgURL={thumbnails}
                   />
                   <PianoKeysColorInput
                     label="Right hand black key color"
                     name="rightHandBlackKeyColor"
-                    imgURL="http://localhost:8000/public/7/frame-1285.jpg"
+                    imgURL={thumbnails}
                   />
                 </VStack>
-                {/* {(() => {
-                console.log(props);
-                props.setValues(")
-                return null;
-              })()} */}
+
                 <Button
-                  /*!props.dirty || */
                   isDisabled={!props.isValid || navigation.state !== "idle"}
                   isLoading={props.isSubmitting}
                   type="submit"

@@ -7,17 +7,43 @@ import {
   FormControl,
   FormLabel,
   Input,
+  Button,
 } from "@chakra-ui/react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FieldHookConfig, useField } from "formik";
 import { useDetailInputContext } from "@/routes/cliParameters/form";
 import { CreateCLIParametersInput } from "@/models/CLIParameters";
 
 type PianoKeysColorInputProps = {
-  imgURL: string;
+  imgURL: string[];
   label: string;
   name: string;
 };
+
+function* getRandomImageGenerator(images: string[]) {
+  if (images.length === 0) {
+    throw new Error("images string array must not be empty");
+  }
+  const uniqueIndexes = new Set<number>();
+
+  while (uniqueIndexes.size !== images.length) {
+    uniqueIndexes.add(Math.floor(Math.random() * images.length));
+  }
+
+  const indexes = Array.from(uniqueIndexes);
+
+  // return function* () {
+  let index = 0;
+  while (true) {
+    yield images[indexes[index]];
+    index += 1;
+
+    if (index >= images.length) {
+      index = 0;
+    }
+  }
+  // };
+}
 
 export function PianoKeysColorInput({
   imgURL,
@@ -31,6 +57,11 @@ export function PianoKeysColorInput({
   const inputRef = useRef<HTMLInputElement>(null);
 
   const { displayDetailInput, setDisplayDetailInput } = useDetailInputContext();
+  const imageGenerator = useMemo(
+    () => getRandomImageGenerator(imgURL),
+    [imgURL]
+  );
+  const [currentImage, setCurrentImage] = useState(imageGenerator.next().value);
 
   const [field, meta, helpers] = useField(
     props as unknown as FieldHookConfig<any>
@@ -66,7 +97,11 @@ export function PianoKeysColorInput({
       draw(image);
     };
 
-    const img = fetchImage(imgURL);
+    // const imageURL = imageGenerator.next().value;
+    if (!currentImage) return;
+
+    const img = fetchImage(currentImage);
+    console.log(img);
     img.addEventListener("load", onImageLoad);
 
     const onCanvasMouseOver = (event: MouseEvent) => {
@@ -98,7 +133,7 @@ export function PianoKeysColorInput({
       sourceCanvas.removeEventListener("click", onCanvasClick);
       img.removeEventListener("load", onImageLoad);
     };
-  }, [imgURL, displayDetailInput]);
+  }, [currentImage, displayDetailInput]);
 
   useEffect(() => {
     const onFocus = () =>
@@ -117,6 +152,32 @@ export function PianoKeysColorInput({
     };
   }, []);
 
+  useEffect(() => {
+    const input = inputRef.current;
+    if (!input) return;
+    if (value === 50) return; //should actually be 0
+    if (value === 1204) return; //should actually be 0
+    if (value === 616) return; //should actually be 0
+
+    input.animate(
+      [
+        {
+          backgroundColor: "#FFFFFF",
+          offset: 0,
+        },
+        {
+          backgroundColor: "#ACCCEB90",
+          offset: 0.1,
+        },
+        {
+          backgroundColor: "#FFFFFF",
+          offset: 1.0,
+        },
+      ],
+      1000
+    );
+  }, [value]);
+
   return (
     <FormControl isInvalid={isInputInValid}>
       <FormLabel textAlign={"center"}>{props.label}</FormLabel>
@@ -129,6 +190,12 @@ export function PianoKeysColorInput({
       />
       {displayDetailInput === props.name && (
         <VStack>
+          <Button
+            onClick={() => setCurrentImage(imageGenerator.next().value)}
+            colorScheme="green"
+          >
+            Load different image
+          </Button>
           <canvas
             style={{ backgroundColor: "lightblue" }}
             ref={sourceCanvasRef}

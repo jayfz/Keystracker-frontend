@@ -3,6 +3,7 @@ import {
   NavLink as RouterLinK,
   useFetchers,
   useNavigation,
+  useRevalidator,
 } from "react-router-dom";
 import {
   Container,
@@ -26,6 +27,8 @@ export default function Root() {
   const eventInProgress =
     fetchers.some((f) => f.state !== "idle") || navigation.state !== "idle";
 
+  const revalidator = useRevalidator();
+
   console.log(
     "current state of websocket",
     websocketRef.current?.readyState ?? "unknown"
@@ -34,8 +37,12 @@ export default function Root() {
 
   useEffect(() => {
     const socket = new WebSocket(import.meta.env.VITE_WEBSOCKET_ENDPOINT_URL);
-    const settingServerMessage = (message: MessageEvent<string>) =>
+    const settingServerMessage = (message: MessageEvent<string>) => {
       setServerMessage(message.data);
+      if (message.data.includes("100")) {
+        revalidator.revalidate();
+      }
+    };
     socket.addEventListener("message", settingServerMessage);
     websocketRef.current = socket;
 

@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 import {
   CreateCLIParametersInput,
+  CreateCLIParametersInputForm,
   createCLIParametersInputSchema,
 } from "../../models/CLIParameters";
 import Utilities from "../../Utilities";
@@ -26,7 +27,7 @@ export function CreateCLIParametersForm() {
   const navigation = useNavigation();
   const toast = useToast();
 
-  const initialValues: CreateCLIParametersInput = {
+  const initialValues: CreateCLIParametersInputForm = {
     projectId: project.id,
     leftHandWhiteKeyColor: "#BC5763",
     leftHandBlackKeyColor: "#BC5763",
@@ -40,10 +41,11 @@ export function CreateCLIParametersForm() {
     trackMode: "Keys",
     numberOfFramesToSkip: 5,
     processFramesDivisibleBy: 1,
+    lastOctaveAt: 0,
   };
 
-  async function onSubmit(values: CreateCLIParametersInput) {
-    const cliParameters = createCLIParametersInputSchema.parse(values);
+  async function onSubmit(values: CreateCLIParametersInputForm) {
+    const cliParameters = createCLIParametersInputSchema.strip().parse(values);
     submit(
       { cliParameters },
       {
@@ -57,7 +59,7 @@ export function CreateCLIParametersForm() {
     formIntent: "create" as const,
     initialValues,
     onSubmit,
-    validate(values: CreateCLIParametersInput) {
+    validate(values: CreateCLIParametersInputForm) {
       const parsedCLIParametersInput =
         createCLIParametersInputSchema.safeParse(values);
       if (parsedCLIParametersInput.success) return {};

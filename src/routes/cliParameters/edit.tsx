@@ -7,8 +7,8 @@ import {
 } from "react-router-dom";
 import {
   UpdateCLIParametersInputSchema,
-  CreateCLIParametersInput,
-} from "../../models/CLIParameters";
+  CreateCLIParametersInputForm,
+} from "@/models/CLIParameters";
 import Utilities from "@/Utilities";
 
 import useTitle from "@/hooks/useTitle";
@@ -68,7 +68,7 @@ export function EditLIParametersForm() {
     return;
   }
 
-  async function onSubmit(values: CreateCLIParametersInput) {
+  async function onSubmit(values: CreateCLIParametersInputForm) {
     const cliParametersToUpdate =
       UpdateCLIParametersInputSchema.strip().parse(values);
     submit(
@@ -82,7 +82,7 @@ export function EditLIParametersForm() {
     );
   }
 
-  function validate(values: CreateCLIParametersInput) {
+  function validate(values: CreateCLIParametersInputForm) {
     const parsedCLIParametersInput =
       UpdateCLIParametersInputSchema.strip().safeParse(values);
     if (parsedCLIParametersInput.success) return {};
@@ -101,7 +101,7 @@ export function EditLIParametersForm() {
       ref={formRef}
       key={initialValues.id}
       formIntent="update"
-      initialValues={initialValues}
+      initialValues={{ ...initialValues, lastOctaveAt: 0 }}
       onSubmit={onSubmit}
       validate={validate}
     />

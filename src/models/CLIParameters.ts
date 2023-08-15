@@ -16,13 +16,29 @@ export const createCLIParametersInputSchema = z.strictObject({
   rawFrameCopyFromLine: z.coerce.number().int().positive(),
   trackMode: z.enum(["FallingNotes", "Keys"]),
   numberOfFramesToSkip: z.coerce.number().int().positive(),
-  processFramesDivisibleBy: z.coerce.number().int().positive()
+  processFramesDivisibleBy: z.coerce.number().int().positive(),
 });
 
-export const UpdateCLIParametersInputSchema = createCLIParametersInputSchema.omit({projectId: true}).partial()
+export const UpdateCLIParametersInputSchema = createCLIParametersInputSchema
+  .omit({ projectId: true })
+  .partial();
 
-export const CLIParametersSchema = createCLIParametersInputSchema.merge(DatabaseRecordSchema).merge(z.strictObject({ status: z.enum(["Enqueued", "Processing", "Failed", "Completed"])}));
+export const CLIParametersSchema = createCLIParametersInputSchema
+  .merge(DatabaseRecordSchema)
+  .merge(
+    z.strictObject({
+      status: z.enum(["Enqueued", "Processing", "Failed", "Completed"]),
+    })
+  );
 
-export type CreateCLIParametersInput = z.infer<typeof createCLIParametersInputSchema>;
-export type UpdateCLIParametersInput = z.infer<typeof UpdateCLIParametersInputSchema>;
+export type CreateCLIParametersInput = z.infer<
+  typeof createCLIParametersInputSchema
+>;
+export type UpdateCLIParametersInput = z.infer<
+  typeof UpdateCLIParametersInputSchema
+>;
 export type CLIParameters = z.infer<typeof CLIParametersSchema>;
+
+export type CreateCLIParametersInputForm = CreateCLIParametersInput & {
+  lastOctaveAt: number;
+};
