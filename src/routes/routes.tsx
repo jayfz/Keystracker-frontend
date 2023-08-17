@@ -8,7 +8,7 @@ import ProjectsPage, {
 
 import CreateProjectPage, {
   action as createProjectAction,
-} from "./projects/create"; // has an action, not a provider
+} from "./projects/create";
 
 import EditProjectPage, {
   loader as EditProjectPageLoader,

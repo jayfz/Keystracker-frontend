@@ -27,23 +27,9 @@ const ProjectSchema = DatabaseRecordSchema.merge(
   })
 );
 
-type iCreateProjectInput = z.infer<typeof CreateProjectInputSchema>;
-type iUpdateProjectInput = z.infer<typeof UpdateProjectInputSchema>;
-type iProject = z.infer<typeof ProjectSchema>;
-type iProjectWithParameters = iProject & {
+export type CreateProjectInput = z.infer<typeof CreateProjectInputSchema>;
+export type UpdateProjectInput = z.infer<typeof UpdateProjectInputSchema>;
+export type Project = z.infer<typeof ProjectSchema>;
+export type ProjectWithParameters = Project & {
   cliParameters: CLIParameters[];
 };
-
-export type CreateProjectInput = iCreateProjectInput;
-export type UpdateProjectInput = iUpdateProjectInput;
-export type Project = iProject;
-export type ProjectWithParameters = iProjectWithParameters;
-
-// export interface CreateProjectInput
-//   extends z.infer<typeof CreateProjectInputSchema> {}
-// export interface UpdateProjectInput
-//   extends z.infer<typeof UpdateProjectInputSchema> {}
-// export interface Project extends z.infer<typeof ProjectSchema> {}
-// export interface ProjectWithParameters extends Project {
-//   cliParameters: CLIParameters[];
-// }

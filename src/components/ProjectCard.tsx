@@ -3,7 +3,7 @@ import { Project } from "@/models/Project";
 import Utilities from "@/Utilities";
 import { useFetcher, Link } from "react-router-dom";
 
-import { MouseEventHandler, useEffect, useState } from "react";
+import { MouseEventHandler, useState } from "react";
 import {
   AbsoluteCenter,
   Box,

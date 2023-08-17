@@ -33,7 +33,6 @@ export default function Root() {
     "current state of websocket",
     websocketRef.current?.readyState ?? "unknown"
   );
-  // console.log("current state of dateref", dateRef.current.toISOString());
 
   useEffect(() => {
     const socket = new WebSocket(import.meta.env.VITE_WEBSOCKET_ENDPOINT_URL);

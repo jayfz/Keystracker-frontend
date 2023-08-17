@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { useState } from "react";
 import { Project } from "@/models/Project";
 import { ProjectCard } from "@/components/ProjectCard";
 import { CreateProjectCard } from "@/components/CreateProjectCard";
@@ -6,15 +6,7 @@ import { ListProjectsContext } from "@/context/ListProjectsContext";
 
 import { Box, SimpleGrid, Skeleton, SkeletonText } from "@chakra-ui/react";
 import { useAsyncValue } from "react-router-dom";
-import AnimatedPage, {
-  fadeInAnimation,
-  bringFromLeftAnimation,
-} from "./AnimatedPage";
 
-// type ListProjectsProps = {
-//   projects: Project[];
-// };
-//props: ListProjectsProps
 export default function ListProjects() {
   const [refreshList, setRefreshList] = useState<boolean>(false);
 
