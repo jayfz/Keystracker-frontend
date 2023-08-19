@@ -115,14 +115,14 @@ const CLIParametersForm = forwardRef<HTMLElement, CLIParametersFormProps>(
                 <PianoPositionInput
                   name="firstOctaveAt"
                   variant="x"
-                  imgURL={thumbnails[0]}
+                  imgURL={thumbnails[1]}
                   label="First Octave At"
                 />
 
                 <PianoPositionInput
                   name="lastOctaveAt"
                   variant="x"
-                  imgURL={thumbnails[0]}
+                  imgURL={thumbnails[1]}
                   label="Last Octave at"
                 />
 
@@ -177,7 +177,7 @@ const CLIParametersForm = forwardRef<HTMLElement, CLIParametersFormProps>(
                 <PianoPositionInput
                   name="rawFrameCopyFromLine"
                   variant="y"
-                  imgURL={thumbnails[0]}
+                  imgURL={thumbnails[1]}
                   label="Raw frame copy from line"
                 />
 

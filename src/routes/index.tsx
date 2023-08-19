@@ -16,11 +16,18 @@ import {
   Box,
 } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
+import {
+  ServerStatusMessage,
+  ServerStatus,
+} from "@/components/ServerStatusMessage";
 
 export default function Root() {
   const websocketRef = useRef<WebSocket | null>(null);
-
-  const [serverMessage, setServerMessage] = useState("fully operational");
+  const initialMessage = "Server is fully operational";
+  const [serverMessage, setServerMessage] = useState<ServerStatus>({
+    status: "Completed",
+    message: initialMessage,
+  });
 
   const fetchers = useFetchers();
   const navigation = useNavigation();
@@ -37,8 +44,9 @@ export default function Root() {
   useEffect(() => {
     const socket = new WebSocket(import.meta.env.VITE_WEBSOCKET_ENDPOINT_URL);
     const settingServerMessage = (message: MessageEvent<string>) => {
-      setServerMessage(message.data);
-      if (message.data.includes("100")) {
+      const status: ServerStatus = JSON.parse(message.data);
+      setServerMessage(status);
+      if (status.status === "Completed" && status.message !== initialMessage) {
         revalidator.revalidate();
       }
     };
@@ -95,7 +103,8 @@ export default function Root() {
           </Flex>
         </nav>
         <Box>
-          <Text mb={8}>Server status: {serverMessage}</Text>
+          <ServerStatusMessage {...serverMessage} />
+          {/* <Text mb={8}>Server status: {serverMessage}</Text> */}
         </Box>
         <Outlet />
         <Container as="footer" mt={12}>
